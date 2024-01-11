@@ -1,6 +1,6 @@
-#include <Windows.h>
+#include "pch.h"
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR szCmdLine, int iCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, int nCmdShow)
 {
-	MessageBoxW(NULL, TEXT("Hello, world!"), TEXT("MessageBox"), 0);
+	MessageBoxW(NULL, TEXT("Hello, world!"), TEXT("MessageBox"), MB_ICONQUESTION);
 }
