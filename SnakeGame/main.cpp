@@ -2,11 +2,10 @@
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
+int WINAPI WinMain( HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PSTR szCmdLine, int iCmdShow)
 {
 	static TCHAR szAppName[] = TEXT("Hello Window");
 	HWND hwnd;
-	MSG msg;
 	WNDCLASS wndclass;
 
 	wndclass.style = CS_HREDRAW | CS_VREDRAW;
@@ -17,6 +16,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	//wndclass.hbrBackground = CreateSolidBrush(RGB(50, 50, 50));
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = szAppName;
 
@@ -41,8 +41,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
 	);
 
 	ShowWindow(hwnd, iCmdShow);
-	UpdateWindow(hwnd);
+	//UpdateWindow(hwnd);
 
+	MSG msg;
 	while (GetMessage(&msg, hwnd, 0, 0))
 	{
 		TranslateMessage(&msg);
