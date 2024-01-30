@@ -30,7 +30,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	hwnd = CreateWindow(
 		szAppName,
 		TEXT("The Hello Program"),
-		WS_OVERLAPPEDWINDOW,
+		WS_OVERLAPPEDWINDOW | WS_VSCROLL,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -54,7 +54,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	return msg.wParam;
 }
 
-SystemMetricsEntry aEntries[] = {
+std::vector<SystemMetricsEntry> vEntries = {
 		{ SM_CXSCREEN, L"SM_CXSCREEN", L"Screen width in pixels" },
 		{ SM_CYSCREEN, L"SM_CYSCREEN", L"Screen height in pixels" },
 		{ SM_CXVSCROLL, L"SM_CXVSCROLL", L"Vertical scroll width" },
@@ -135,9 +135,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;
 	RECT rect;
 
-	TEXTMETRIC tm;
-	static int cxChar, cxCaps, cyChar;
-	static int cxClient, cyClient;
+	static int cxChar, cxCaps, cyChar, iMaxWidth;
 
 	switch (message)
 	{
@@ -145,34 +143,168 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			hdc = GetDC(hwnd);
 
+			TEXTMETRIC tm;
 			GetTextMetrics(hdc, &tm);
 			cxChar = tm.tmAveCharWidth;
 			cxCaps = (tm.tmPitchAndFamily & 1 ? 3 : 2) * cxChar / 2;
 			cyChar = tm.tmHeight + tm.tmExternalLeading;
 
 			ReleaseDC(hwnd, hdc);
+
+			iMaxWidth = 40 * cxChar + 22 * cxCaps;
+
 			return 0;
 		}
 		case WM_SIZE:
 		{
+			static int cxClient, cyClient;
 			cxClient = LOWORD(lParam);
 			cyClient = HIWORD(lParam);
+
+			SCROLLINFO siVert, siHorz;
+
+			siVert.cbSize = sizeof(SCROLLINFO);
+			siVert.fMask = SIF_ALL;
+			siVert.nMin = 0;
+			siVert.nMax = vEntries.size() - 1;
+			siVert.nPage = cyClient / cyChar;
+			SetScrollInfo(hwnd, SB_VERT, &siVert, TRUE);
+
+			siHorz.cbSize = sizeof(SCROLLINFO);
+			siHorz.fMask = SIF_ALL;
+			siHorz.nMin = 0;
+			siHorz.nMax = 2 + iMaxWidth / cxChar;
+			siHorz.nPage = cxClient / cxChar;
+			SetScrollInfo(hwnd, SB_HORZ, &siHorz, TRUE);
+			return 0;
+		}
+		case WM_VSCROLL:
+		{
+			static int iVertPos;
+			static SCROLLINFO si;
+			si.cbSize = sizeof(SCROLLINFO);
+			si.fMask = SIF_ALL;
+			GetScrollInfo(hwnd, SB_VERT, &si);
+
+			iVertPos = si.nPos;
+
+			switch (LOWORD(wParam))
+			{
+			case SB_TOP:
+				si.nPos = si.nMin;
+				break;
+			case SB_BOTTOM:
+				si.nPos = si.nMax;
+				break;
+			case SB_LINEUP:
+				si.nPos -= 1;
+				break;
+			case SB_LINEDOWN:
+				si.nPos += 1;
+				break;
+			case SB_PAGEUP:
+				si.nPos -= si.nPage;
+				break;
+			case SB_PAGEDOWN:
+				si.nPos += si.nPage;
+				break;
+			case SB_THUMBTRACK:
+				si.nPos = si.nTrackPos;
+				break;
+			}
+
+			si.fMask = SIF_POS;
+			SetScrollInfo(hwnd, SB_VERT, &si, TRUE);
+			GetScrollInfo(hwnd, SB_VERT, &si);
+
+			if (si.nPos != iVertPos)
+			{
+				ScrollWindow(hwnd, 0, cyChar * (iVertPos - si.nPos), NULL, NULL);
+				UpdateWindow(hwnd);
+			}
+			return 0;
+		}
+		case WM_HSCROLL:
+		{
+			static int iHorzPos;
+			static SCROLLINFO si;
+			si.cbSize = sizeof(SCROLLINFO);
+			si.fMask = SIF_ALL;
+			GetScrollInfo(hwnd, SB_HORZ, &si);
+
+			iHorzPos = si.nPos;
+
+			switch (LOWORD(wParam))
+			{
+			case SB_LEFT:
+				si.nPos = si.nMin;
+				break;
+			case SB_RIGHT:
+				si.nPos = si.nMax;
+				break;
+			case SB_LINELEFT:
+				si.nPos -= 1;
+				break;
+			case SB_LINERIGHT:
+				si.nPos += 1;
+				break;
+			case SB_PAGELEFT:
+				si.nPos -= si.nPage;
+				break;
+			case SB_PAGERIGHT:
+				si.nPos += si.nPage;
+				break;
+			case SB_THUMBTRACK:
+				si.nPos = si.nTrackPos;
+				break;
+			}
+
+			si.fMask = SIF_POS;
+			SetScrollInfo(hwnd, SB_HORZ, &si, TRUE);
+			GetScrollInfo(hwnd, SB_HORZ, &si);
+
+			if (si.nPos != iHorzPos)
+			{
+				ScrollWindow(hwnd, cxChar * (iHorzPos - si.nPos), 0, NULL, NULL);
+				UpdateWindow(hwnd);
+			}
 			return 0;
 		}
 		case WM_PAINT:
 		{
 			hdc = BeginPaint(hwnd, &ps);
 
-			for (int i = 0; i < sizeof(aEntries) / sizeof(aEntries[0]); i++)
+			static int iVertPos, iHorzPos;
+			static int iPaintBeg, iPaintEnd;
+			static int x, y;
+			static SCROLLINFO si;
+			si.cbSize = sizeof(SCROLLINFO);
+			si.fMask = SIF_POS;
+
+			GetScrollInfo(hwnd, SB_VERT, &si);
+			iVertPos = si.nPos;
+			GetScrollInfo(hwnd, SB_HORZ, &si);
+			iHorzPos = si.nPos;
+
+			iPaintBeg = max(0, iVertPos + ps.rcPaint.top / cyChar);
+			iPaintEnd = min(vEntries.size() - 1, iVertPos + ps.rcPaint.bottom / cyChar);
+
+			for (int i = iPaintBeg; i <= iPaintEnd; i++)
 			{
-				const auto& entry = aEntries[i];
+				const auto& entry = vEntries[i];
 				std::wstring szEntryName{ entry.GetName() };
 				std::wstring szEntryDescription{ entry.GetDescription() };
 				std::wstring szEntryNumericValue{ std::to_wstring(entry.GetNumericValue()) };
+				
+				x = cxChar * (1 - iHorzPos);
+				y = cyChar * (i - iVertPos);
 
-				TextOut(hdc, 0, cyChar * i, szEntryName.c_str(), szEntryName.size());
-				TextOut(hdc, 22 * cxCaps, cyChar * i, szEntryDescription.c_str(), szEntryDescription.size());
-				TextOut(hdc, 22 * cxCaps + 40 * cxChar, cyChar * i, szEntryNumericValue.c_str(), szEntryNumericValue.size());
+				TextOut(hdc, x, y, szEntryName.c_str(), szEntryName.size());
+				TextOut(hdc, x + 22 * cxCaps, y, szEntryDescription.c_str(), szEntryDescription.size());
+
+				SetTextAlign(hdc, TA_RIGHT | TA_TOP);
+				TextOut(hdc, x + 22 * cxCaps + 40 * cxChar, y, szEntryNumericValue.c_str(), szEntryNumericValue.size());
+				SetTextAlign(hdc, TA_LEFT | TA_TOP);
 			}
 
 			EndPaint(hwnd, &ps);
