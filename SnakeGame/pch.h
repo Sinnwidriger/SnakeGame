@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SNAKE_GAME_PCH_H_
+#define SNAKE_GAME_PCH_H_
 
 #include <Windows.h>
 #include <iostream>
@@ -8,3 +9,5 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+
+#endif

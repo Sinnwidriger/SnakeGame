@@ -1,21 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="SystemMetricsEntry.cpp">
-      <Filter>Classes</Filter>
+    <ClCompile Include="main.cc" />
+    <ClCompile Include="pch.cc" />
+    <ClCompile Include="system_metrics_app.cc">
+      <Filter>Applications</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="SystemMetricsEntry.h">
-      <Filter>Classes</Filter>
+    <ClInclude Include="system_metrics_app.h">
+      <Filter>Applications</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Classes">
       <UniqueIdentifier>{9a9b75b4-2ee3-476e-a244-3d911d202625}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Applications">
+      <UniqueIdentifier>{2134f4ba-dd2a-4799-8d28-4fd148b0f6df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
