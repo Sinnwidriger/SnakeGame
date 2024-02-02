@@ -195,7 +195,7 @@ LRESULT SystemMetricsApp::HandleScroll(MessageProcParameters mpp, int axis)
 		break;
 	case SB_LINEDOWN | SB_LINERIGHT:
 		si.nPos += 1;
-		if (si.nPos > si.nMax - si.nPage) si.nPos = si.nMax - si.nPage;
+		if (si.nPos > si.nMax - static_cast<int>(si.nPage)) si.nPos = si.nMax - static_cast<int>(si.nPage);
 		break;
 	case SB_PAGEUP | SB_PAGELEFT:
 		si.nPos -= si.nPage;
@@ -259,9 +259,9 @@ LRESULT SystemMetricsApp::HandleDestroy(MessageProcParameters mpp)
 	return 0;
 }
 
-void SystemMetricsApp::DrawSystemMetric(HDC dc, int x, int y, SystemMetric& sm_entry)
+void SystemMetricsApp::DrawSystemMetric(HDC dc, int x, int y, SystemMetric& sm_entry) const
 {
-	auto [sm_index, sm_name, sm_description, sm_numeric_value] = sm_entry;
+	auto& [sm_index, sm_name, sm_description, sm_numeric_value] = sm_entry;
 
 	int x1 = x, x2 = x, x3 = x;
 	int y1 = y, y2 = y, y3 = y;

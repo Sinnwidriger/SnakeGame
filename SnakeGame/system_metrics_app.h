@@ -55,7 +55,7 @@ class SystemMetricsApp
 	LRESULT HandlePaint(MessageProcParameters mpp);
 	LRESULT HandleDestroy(MessageProcParameters mpp);
 
-	void DrawSystemMetric(HDC dc, int x, int y, SystemMetric& entry);
+	void DrawSystemMetric(HDC dc, int x, int y, SystemMetric& entry) const;
 
 	// Fields
 	HINSTANCE instance_;
@@ -65,7 +65,6 @@ class SystemMetricsApp
 
 	static constexpr int kFirstColumnCharacters = 22;
 	static constexpr int kSecondColumnCharacters = 40;
-	//static constexpr int kThirdColumnCharacters = 4;
 
 	std::vector<SystemMetric> sm_entries_ = {
 		{ SM_CXSCREEN, L"SM_CXSCREEN", L"Screen width in pixels" },

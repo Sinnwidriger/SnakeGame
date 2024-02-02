@@ -9,8 +9,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		MessageBox(NULL, L"App creation failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
 		return -1;
 	}
-	/*snake_game::SystemMetricsApp app;
-	app.Initialize();*/
 
 	return app->Run();
 }
