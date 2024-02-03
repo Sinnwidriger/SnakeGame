@@ -1,24 +1,30 @@
 #include "pch.h"
-#include "system_metrics_app.h"
+#include "system_information_app.h"
 
-namespace snake_game
+namespace applications
 {
 
-std::unique_ptr<SystemMetricsApp> SystemMetricsApp::Create()
+std::unique_ptr<SystemInformationApp> SystemInformationApp::Create()
 {
-	auto app_pointer = std::unique_ptr<SystemMetricsApp>(new SystemMetricsApp);
+	auto app_pointer = std::unique_ptr<SystemInformationApp>(new SystemInformationApp);
 
 	if (app_pointer->Initialize())
 		return app_pointer;
 	else
-		return nullptr;
+		return std::unique_ptr<SystemInformationApp>(nullptr);
 }
 
-SystemMetricsApp::SystemMetricsApp() :
-	instance_(GetModuleHandle(NULL)), wnd_(NULL), window_class_name_(L"SystemMetrics"), char_dimensions_(CharDimensions())
-{ }
+SystemInformationApp::SystemInformationApp() :
+	instance_(GetModuleHandle(NULL)), wnd_(NULL), window_class_name_(L"SystemInformationApp"), char_dimensions_(CharDimensions())
+{
+#if 0
+	display_information_ = system_metrics_;
+#else
+	display_information_ = device_capabilities_;
+#endif
+}
 
-bool SystemMetricsApp::Initialize()
+bool SystemInformationApp::Initialize()
 {
 	WNDCLASS wc = {
 		.style = CS_HREDRAW | CS_VREDRAW,
@@ -36,7 +42,7 @@ bool SystemMetricsApp::Initialize()
 
 	wnd_ = CreateWindow(
 		window_class_name_.c_str(),
-		L"SystemMetrics Application",
+		L"System Information Application",
 		WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		640, 480,
@@ -57,7 +63,7 @@ bool SystemMetricsApp::Initialize()
 	return true;
 }
 
-int SystemMetricsApp::Run()
+int SystemInformationApp::Run()
 {
 	MSG msg = {};
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -68,19 +74,19 @@ int SystemMetricsApp::Run()
 	return static_cast<int>(msg.wParam);
 }
 
-LRESULT SystemMetricsApp::WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT SystemInformationApp::WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	SystemMetricsApp* app_pointer = nullptr;
+	SystemInformationApp* app_pointer = nullptr;
 
 	if (msg == WM_NCCREATE)
 	{
 		CREATESTRUCT* create_struct_pointer = reinterpret_cast<CREATESTRUCT*>(lparam);
-		app_pointer = static_cast<SystemMetricsApp*>(create_struct_pointer->lpCreateParams);
+		app_pointer = static_cast<SystemInformationApp*>(create_struct_pointer->lpCreateParams);
 		SetWindowLongPtr(wnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(app_pointer));
 	}
 	else
 	{
-		app_pointer = reinterpret_cast<SystemMetricsApp*>(GetWindowLongPtr(wnd, GWLP_USERDATA));
+		app_pointer = reinterpret_cast<SystemInformationApp*>(GetWindowLongPtr(wnd, GWLP_USERDATA));
 	}
 
 	if (app_pointer)
@@ -99,7 +105,7 @@ LRESULT SystemMetricsApp::WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM l
 	}
 }
 
-LRESULT SystemMetricsApp::HandleMessage(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandleMessage(MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -122,23 +128,17 @@ LRESULT SystemMetricsApp::HandleMessage(MessageProcParameters mpp)
 	}
 }
 
-LRESULT SystemMetricsApp::HandleCreate(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandleCreate(MessageProcParameters mpp)
 {
-	HDC dc = GetDC(wnd_);
+	InitializeCharDimensions();
 
-	TEXTMETRIC tm;
-	GetTextMetrics(dc, &tm);
-
-	char_dimensions_.lower_case_width = tm.tmAveCharWidth;
-	char_dimensions_.upper_case_width = static_cast<unsigned int>(tm.tmAveCharWidth * (tm.tmPitchAndFamily & 1 ? 1.5 : 1));
-	char_dimensions_.height = tm.tmHeight + tm.tmExternalLeading;
-
-	ReleaseDC(wnd_, dc);
+	InitializeSystemMetricValues();
+	InitializeDeviceCapabilityValues();
 
 	return 0;
 }
 
-LRESULT SystemMetricsApp::HandleSize(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandleSize(MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -149,7 +149,7 @@ LRESULT SystemMetricsApp::HandleSize(MessageProcParameters mpp)
 		.cbSize = sizeof(SCROLLINFO),
 		.fMask = SIF_ALL,
 		.nMin = 0,
-		.nMax = static_cast<int>(sm_entries_.size()),
+		.nMax = static_cast<int>(display_information_.size()),
 		.nPage = static_cast<unsigned int>(client_area_height / char_dimensions_.height)
 	};
 	SetScrollInfo(wnd_, SB_VERT, &siVert, TRUE);
@@ -167,7 +167,7 @@ LRESULT SystemMetricsApp::HandleSize(MessageProcParameters mpp)
 	return 0;
 }
 
-LRESULT SystemMetricsApp::HandleScroll(MessageProcParameters mpp, int axis)
+LRESULT SystemInformationApp::HandleScroll(MessageProcParameters mpp, int axis)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -219,7 +219,7 @@ LRESULT SystemMetricsApp::HandleScroll(MessageProcParameters mpp, int axis)
 	return 0;
 }
 
-LRESULT SystemMetricsApp::HandlePaint(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandlePaint(MessageProcParameters mpp)
 {
 
 	PAINTSTRUCT ps;
@@ -239,13 +239,13 @@ LRESULT SystemMetricsApp::HandlePaint(MessageProcParameters mpp)
 	GetScrollInfo(wnd_, SB_HORZ, &horizontal_scroll_info);
 	int horizontal_scroll_position = horizontal_scroll_info.nPos;
 
-	for (int i = 0; i < sm_entries_.size(); ++i)
+	for (int i = 0; i < display_information_.size(); ++i)
 	{
-		DrawSystemMetric(
+		DrawSystemInformation(
 			dc,
 			(1 - horizontal_scroll_position) * char_dimensions_.lower_case_width,
 			(i - vertical_scroll_position) * char_dimensions_.height,
-			sm_entries_[i]
+			*display_information_[i]
 		);
 	}
 
@@ -253,37 +253,71 @@ LRESULT SystemMetricsApp::HandlePaint(MessageProcParameters mpp)
 	return 0;
 }
 
-LRESULT SystemMetricsApp::HandleDestroy(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandleDestroy(MessageProcParameters mpp)
 {
 	PostQuitMessage(0);
 	return 0;
 }
 
-void SystemMetricsApp::DrawSystemMetric(HDC dc, int x, int y, SystemMetric& sm_entry) const
+void SystemInformationApp::InitializeCharDimensions()
 {
-	auto& [sm_index, sm_name, sm_description, sm_numeric_value] = sm_entry;
+	HDC dc = GetDC(wnd_);
+	TEXTMETRIC tm;
+	GetTextMetrics(dc, &tm);
 
-	int x1 = x, x2 = x, x3 = x;
-	int y1 = y, y2 = y, y3 = y;
+	char_dimensions_.lower_case_width = tm.tmAveCharWidth;
+	char_dimensions_.upper_case_width = static_cast<unsigned int>(tm.tmAveCharWidth * (tm.tmPitchAndFamily & 1 ? 1.5 : 1));
+	char_dimensions_.height = tm.tmHeight + tm.tmExternalLeading;
+
+	ReleaseDC(wnd_, dc);
+}
+
+void SystemInformationApp::InitializeSystemMetricValues()
+{
+	for (auto system_information_pointer : system_metrics_)
+	{
+		auto system_metric_pointer = std::static_pointer_cast<shared::SystemMetric>(system_information_pointer);
+		system_metric_pointer->InitializeNumericValue();
+	}
+}
+
+void SystemInformationApp::InitializeDeviceCapabilityValues()
+{
+	HDC dc = GetDC(wnd_);
+	for (auto system_information_pointer : device_capabilities_)
+	{
+		auto device_capability_pointer = std::static_pointer_cast<shared::DeviceCapability>(system_information_pointer);
+		device_capability_pointer->InitializeNumericValue(dc);
+	}
+	ReleaseDC(wnd_, dc);
+}
+
+
+void SystemInformationApp::DrawSystemInformation(HDC dc, int x, int y, shared::SystemInformation& system_information) const
+{
+	int x1, x2, x3;
+	x1 = x;
 	x2 = x1 + kFirstColumnCharacters * char_dimensions_.upper_case_width;
 	x3 = x2 + kSecondColumnCharacters * char_dimensions_.lower_case_width;
 
-	sm_numeric_value = std::to_wstring(GetSystemMetrics(sm_index));
+	std::wstring column1 = system_information.name();
+	std::wstring column2 = system_information.description();
+	std::wstring column3 = system_information.numeric_value();
 
 	SetTextAlign(dc, TA_LEFT | TA_TOP);
 	TextOut(
-		dc, x1, y1,
-		sm_name.c_str(), static_cast<int>(sm_name.size())
+		dc, x1, y,
+		column1.c_str(), static_cast<int>(column1.size())
 	);
 	TextOut(
-		dc, x2, y2,
-		sm_description.c_str(), static_cast<int>(sm_description.size())
+		dc, x2, y,
+		column2.c_str(), static_cast<int>(column2.size())
 	);
 
 	SetTextAlign(dc, TA_RIGHT | TA_TOP);
 	TextOut(
-		dc, x3, y3,
-		sm_numeric_value.c_str(), static_cast<int>(sm_numeric_value.size())
+		dc, x3, y,
+		column3.c_str(), static_cast<int>(column3.size())
 	);
 	
 	SetTextAlign(dc, TA_LEFT | TA_TOP);

@@ -3,21 +3,39 @@
   <ItemGroup>
     <ClCompile Include="main.cc" />
     <ClCompile Include="pch.cc" />
-    <ClCompile Include="system_metrics_app.cc">
-      <Filter>Applications</Filter>
+    <ClCompile Include="system_information_app.cc">
+      <Filter>applications</Filter>
+    </ClCompile>
+    <ClCompile Include="system_information.cc">
+      <Filter>shared</Filter>
+    </ClCompile>
+    <ClCompile Include="system_metric.cc">
+      <Filter>shared</Filter>
+    </ClCompile>
+    <ClCompile Include="device_capability.cc">
+      <Filter>shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="system_metrics_app.h">
-      <Filter>Applications</Filter>
+    <ClInclude Include="system_information_app.h">
+      <Filter>applications</Filter>
+    </ClInclude>
+    <ClInclude Include="system_information.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="system_metric.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="device_capability.h">
+      <Filter>shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Classes">
+    <Filter Include="shared">
       <UniqueIdentifier>{9a9b75b4-2ee3-476e-a244-3d911d202625}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Applications">
+    <Filter Include="applications">
       <UniqueIdentifier>{2134f4ba-dd2a-4799-8d28-4fd148b0f6df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
