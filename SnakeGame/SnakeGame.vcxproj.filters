@@ -9,17 +9,17 @@
     <ClCompile Include="sys_info_app.cc">
       <Filter>applications\sys_info_app</Filter>
     </ClCompile>
-    <ClCompile Include="system_metric.cc">
-      <Filter>applications\sys_info_app</Filter>
-    </ClCompile>
-    <ClCompile Include="system_information.cc">
-      <Filter>applications\sys_info_app</Filter>
-    </ClCompile>
-    <ClCompile Include="device_capability.cc">
-      <Filter>applications\sys_info_app</Filter>
-    </ClCompile>
     <ClCompile Include="basic_drawing_app.cc">
       <Filter>applications\basic_drawing_app</Filter>
+    </ClCompile>
+    <ClCompile Include="device_capability.cc">
+      <Filter>applications\sys_info_app\sys_info_types</Filter>
+    </ClCompile>
+    <ClCompile Include="system_information.cc">
+      <Filter>applications\sys_info_app\sys_info_types</Filter>
+    </ClCompile>
+    <ClCompile Include="system_metric.cc">
+      <Filter>applications\sys_info_app\sys_info_types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -30,17 +30,17 @@
     <ClInclude Include="sys_info_app.h">
       <Filter>applications\sys_info_app</Filter>
     </ClInclude>
-    <ClInclude Include="system_metric.h">
-      <Filter>applications\sys_info_app</Filter>
-    </ClInclude>
-    <ClInclude Include="system_information.h">
-      <Filter>applications\sys_info_app</Filter>
-    </ClInclude>
-    <ClInclude Include="device_capability.h">
-      <Filter>applications\sys_info_app</Filter>
-    </ClInclude>
     <ClInclude Include="basic_drawing_app.h">
       <Filter>applications\basic_drawing_app</Filter>
+    </ClInclude>
+    <ClInclude Include="device_capability.h">
+      <Filter>applications\sys_info_app\sys_info_types</Filter>
+    </ClInclude>
+    <ClInclude Include="system_information.h">
+      <Filter>applications\sys_info_app\sys_info_types</Filter>
+    </ClInclude>
+    <ClInclude Include="system_metric.h">
+      <Filter>applications\sys_info_app\sys_info_types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +55,9 @@
     </Filter>
     <Filter Include="applications\basic_drawing_app">
       <UniqueIdentifier>{26b7fc01-bee1-4d78-b9a1-e96240bbe04c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="applications\sys_info_app\sys_info_types">
+      <UniqueIdentifier>{b088f45d-6ab7-4d1b-9814-6cfd26d96213}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,5 +1,4 @@
-#ifndef SNAKE_GAME_PCH_H_
-#define SNAKE_GAME_PCH_H_
+#pragma once
 
 #include <Windows.h>
 #include <iostream>
@@ -13,5 +12,3 @@
 #include <numbers>
 #include <cmath>
 #include <functional>
-
-#endif
