@@ -9,6 +9,12 @@
 namespace applications
 {
 
+enum class SysInfoAppContentType
+{
+	kSystemMetrics = 0,
+	kDeviceCapabilities = 1
+};
+
 struct CharDimensions
 {
 	unsigned int lower_case_width;
@@ -16,12 +22,15 @@ struct CharDimensions
 	unsigned int height;
 };
 
-class SystemInformationApp : public shared::Window
+class SysInfoApp : public shared::Window
 {
 	friend class Window;
 
+public:
+	void SetContentType(SysInfoAppContentType content_type);
+
 private:
-	SystemInformationApp();
+	SysInfoApp();
 
 	LRESULT HandleCreate(shared::MessageProcParameters mpp);
 	LRESULT HandleSize(shared::MessageProcParameters mpp);
@@ -30,6 +39,7 @@ private:
 	LRESULT HandleDestroy(shared::MessageProcParameters mpp);
 
 	virtual LRESULT HandleMessage(shared::MessageProcParameters mpp) override;
+
 
 	void InitializeCharDimensions();
 	void InitializeSystemMetricValues();

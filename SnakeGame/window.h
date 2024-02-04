@@ -27,7 +27,7 @@ public:
 
 
 	template<WindowConcept T>
-	static std::unique_ptr<T> Create();
+	static std::shared_ptr<T> Create();
 
 	// Public Methods
 	bool Initialize();
@@ -53,7 +53,7 @@ protected:
 };
 
 template<WindowConcept T>
-static std::unique_ptr<T> Window::Create()
+static std::shared_ptr<T> Window::Create()
 {
 	auto app_pointer = std::unique_ptr<T>(new T());
 

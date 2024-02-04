@@ -1,10 +1,25 @@
 #include "pch.h"
-#include "system_information_app.h"
+#include "sys_info_app.h"
 
 namespace applications
 {
 
-LRESULT SystemInformationApp::HandleMessage(shared::MessageProcParameters mpp)
+void SysInfoApp::SetContentType(SysInfoAppContentType content_type)
+{
+	switch (content_type)
+	{
+	case SysInfoAppContentType::kSystemMetrics:
+		display_information_ = system_metrics_;
+		break;
+	case SysInfoAppContentType::kDeviceCapabilities:
+		display_information_ = device_capabilities_;
+		break;
+	}
+
+	InvalidateRect(wnd_, nullptr, TRUE);
+}
+
+LRESULT SysInfoApp::HandleMessage(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -27,26 +42,24 @@ LRESULT SystemInformationApp::HandleMessage(shared::MessageProcParameters mpp)
 	}
 }
 
-SystemInformationApp::SystemInformationApp() :
+SysInfoApp::SysInfoApp() :
 	shared::Window(
 		L"System Information Application",
 		WS_VSCROLL | WS_HSCROLL),
 	char_dimensions_(CharDimensions())
 {
-	display_information_ = system_metrics_;
-}
-
-LRESULT SystemInformationApp::HandleCreate(shared::MessageProcParameters mpp)
-{
-	InitializeCharDimensions();
-
 	InitializeSystemMetricValues();
 	InitializeDeviceCapabilityValues();
+}
+
+LRESULT SysInfoApp::HandleCreate(shared::MessageProcParameters mpp)
+{
+	InitializeCharDimensions();
 
 	return 0;
 }
 
-LRESULT SystemInformationApp::HandleSize(shared::MessageProcParameters mpp)
+LRESULT SysInfoApp::HandleSize(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -75,7 +88,7 @@ LRESULT SystemInformationApp::HandleSize(shared::MessageProcParameters mpp)
 	return 0;
 }
 
-LRESULT SystemInformationApp::HandleScroll(shared::MessageProcParameters mpp, int axis)
+LRESULT SysInfoApp::HandleScroll(shared::MessageProcParameters mpp, int axis)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -127,9 +140,8 @@ LRESULT SystemInformationApp::HandleScroll(shared::MessageProcParameters mpp, in
 	return 0;
 }
 
-LRESULT SystemInformationApp::HandlePaint(shared::MessageProcParameters mpp)
+LRESULT SysInfoApp::HandlePaint(shared::MessageProcParameters mpp)
 {
-
 	PAINTSTRUCT ps;
 	HDC dc = BeginPaint(wnd_, &ps);
 
@@ -161,13 +173,13 @@ LRESULT SystemInformationApp::HandlePaint(shared::MessageProcParameters mpp)
 	return 0;
 }
 
-LRESULT SystemInformationApp::HandleDestroy(shared::MessageProcParameters mpp)
+LRESULT SysInfoApp::HandleDestroy(shared::MessageProcParameters mpp)
 {
 	PostQuitMessage(0);
 	return 0;
 }
 
-void SystemInformationApp::InitializeCharDimensions()
+void SysInfoApp::InitializeCharDimensions()
 {
 	HDC dc = GetDC(wnd_);
 	TEXTMETRIC tm;
@@ -180,7 +192,7 @@ void SystemInformationApp::InitializeCharDimensions()
 	ReleaseDC(wnd_, dc);
 }
 
-void SystemInformationApp::InitializeSystemMetricValues()
+void SysInfoApp::InitializeSystemMetricValues()
 {
 	for (auto& system_information_pointer : system_metrics_)
 	{
@@ -189,7 +201,7 @@ void SystemInformationApp::InitializeSystemMetricValues()
 	}
 }
 
-void SystemInformationApp::InitializeDeviceCapabilityValues()
+void SysInfoApp::InitializeDeviceCapabilityValues()
 {
 	HDC dc = GetDC(wnd_);
 	for (auto& system_information_pointer : device_capabilities_)
@@ -201,7 +213,7 @@ void SystemInformationApp::InitializeDeviceCapabilityValues()
 }
 
 
-void SystemInformationApp::DrawSystemInformation(HDC dc, int x, int y, shared::SystemInformation& system_information) const
+void SysInfoApp::DrawSystemInformation(HDC dc, int x, int y, shared::SystemInformation& system_information) const
 {
 	int x1, x2, x3;
 	x1 = x;

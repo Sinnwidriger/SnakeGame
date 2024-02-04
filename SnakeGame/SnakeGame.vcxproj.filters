@@ -3,44 +3,44 @@
   <ItemGroup>
     <ClCompile Include="main.cc" />
     <ClCompile Include="pch.cc" />
-    <ClCompile Include="system_information_app.cc">
-      <Filter>applications</Filter>
-    </ClCompile>
-    <ClCompile Include="system_information.cc">
-      <Filter>shared</Filter>
-    </ClCompile>
-    <ClCompile Include="system_metric.cc">
-      <Filter>shared</Filter>
-    </ClCompile>
-    <ClCompile Include="device_capability.cc">
-      <Filter>shared</Filter>
-    </ClCompile>
     <ClCompile Include="window.cc">
       <Filter>shared</Filter>
     </ClCompile>
-    <ClCompile Include="sin_wave_app.cc">
-      <Filter>applications</Filter>
+    <ClCompile Include="sys_info_app.cc">
+      <Filter>applications\sys_info_app</Filter>
+    </ClCompile>
+    <ClCompile Include="system_metric.cc">
+      <Filter>applications\sys_info_app</Filter>
+    </ClCompile>
+    <ClCompile Include="system_information.cc">
+      <Filter>applications\sys_info_app</Filter>
+    </ClCompile>
+    <ClCompile Include="device_capability.cc">
+      <Filter>applications\sys_info_app</Filter>
+    </ClCompile>
+    <ClCompile Include="basic_drawing_app.cc">
+      <Filter>applications\basic_drawing_app</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="system_information_app.h">
-      <Filter>applications</Filter>
-    </ClInclude>
-    <ClInclude Include="system_information.h">
-      <Filter>shared</Filter>
-    </ClInclude>
-    <ClInclude Include="system_metric.h">
-      <Filter>shared</Filter>
-    </ClInclude>
-    <ClInclude Include="device_capability.h">
-      <Filter>shared</Filter>
-    </ClInclude>
     <ClInclude Include="window.h">
       <Filter>shared</Filter>
     </ClInclude>
-    <ClInclude Include="sin_wave_app.h">
-      <Filter>applications</Filter>
+    <ClInclude Include="sys_info_app.h">
+      <Filter>applications\sys_info_app</Filter>
+    </ClInclude>
+    <ClInclude Include="system_metric.h">
+      <Filter>applications\sys_info_app</Filter>
+    </ClInclude>
+    <ClInclude Include="system_information.h">
+      <Filter>applications\sys_info_app</Filter>
+    </ClInclude>
+    <ClInclude Include="device_capability.h">
+      <Filter>applications\sys_info_app</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_drawing_app.h">
+      <Filter>applications\basic_drawing_app</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +49,12 @@
     </Filter>
     <Filter Include="applications">
       <UniqueIdentifier>{2134f4ba-dd2a-4799-8d28-4fd148b0f6df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="applications\sys_info_app">
+      <UniqueIdentifier>{fbf5ddc3-c92b-4e84-a6c7-9733e1c7c092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="applications\basic_drawing_app">
+      <UniqueIdentifier>{26b7fc01-bee1-4d78-b9a1-e96240bbe04c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

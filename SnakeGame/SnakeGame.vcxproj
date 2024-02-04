@@ -94,19 +94,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="sin_wave_app.cc" />
+    <ClCompile Include="basic_drawing_app.cc" />
     <ClCompile Include="system_information.cc" />
     <ClCompile Include="system_metric.cc" />
-    <ClCompile Include="system_information_app.cc" />
+    <ClCompile Include="sys_info_app.cc" />
     <ClCompile Include="window.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="device_capability.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="sin_wave_app.h" />
+    <ClInclude Include="basic_drawing_app.h" />
     <ClInclude Include="system_information.h" />
     <ClInclude Include="system_metric.h" />
-    <ClInclude Include="system_information_app.h" />
+    <ClInclude Include="sys_info_app.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

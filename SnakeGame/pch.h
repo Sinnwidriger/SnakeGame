@@ -12,5 +12,6 @@
 #include <type_traits>
 #include <numbers>
 #include <cmath>
+#include <functional>
 
 #endif
