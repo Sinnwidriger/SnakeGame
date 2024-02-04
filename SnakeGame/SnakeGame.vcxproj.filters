@@ -15,6 +15,9 @@
     <ClCompile Include="device_capability.cc">
       <Filter>shared</Filter>
     </ClCompile>
+    <ClCompile Include="window.cc">
+      <Filter>shared</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -28,6 +31,9 @@
       <Filter>shared</Filter>
     </ClInclude>
     <ClInclude Include="device_capability.h">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h">
       <Filter>shared</Filter>
     </ClInclude>
   </ItemGroup>

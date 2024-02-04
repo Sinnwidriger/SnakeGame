@@ -97,6 +97,7 @@
     <ClCompile Include="system_information.cc" />
     <ClCompile Include="system_metric.cc" />
     <ClCompile Include="system_information_app.cc" />
+    <ClCompile Include="window.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="device_capability.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="system_information.h" />
     <ClInclude Include="system_metric.h" />
     <ClInclude Include="system_information_app.h" />
+    <ClInclude Include="window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

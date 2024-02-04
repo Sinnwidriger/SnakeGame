@@ -4,16 +4,10 @@
 #include "system_information.h"
 #include "system_metric.h"
 #include "device_capability.h"
+#include "window.h"
 
 namespace applications
 {
-
-struct MessageProcParameters {
-	HWND wnd;
-	UINT msg;
-	WPARAM wparam;
-	LPARAM lparam;
-};
 
 struct CharDimensions
 {
@@ -22,34 +16,20 @@ struct CharDimensions
 	unsigned int height;
 };
 
-class SystemInformationApp
+class SystemInformationApp : public shared::Window
 {
- public:
-	// Constructors
-	// This class is NOT copyable BUT moveable
-	SystemInformationApp(const SystemInformationApp&) = delete;
-	SystemInformationApp& operator=(const SystemInformationApp&) = delete;
-	SystemInformationApp(SystemInformationApp&&) = default;
-	SystemInformationApp& operator=(SystemInformationApp&&) = default;
-
-	// Public Methods
-	static std::unique_ptr<SystemInformationApp> Create();
-	bool Initialize();
-	int Run();
+	friend class Window;
 
  private:
-	// Clients can't invoke the constructor directly
-	SystemInformationApp();
+	SystemInformationApp(const std::wstring& window_title);
 
-	// Methods
-	static LRESULT CALLBACK WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam);
-	LRESULT HandleMessage(MessageProcParameters mpp);
+	LRESULT HandleCreate(shared::MessageProcParameters mpp);
+	LRESULT HandleSize(shared::MessageProcParameters mpp);
+	LRESULT HandleScroll(shared::MessageProcParameters mpp, int axis);
+	LRESULT HandlePaint(shared::MessageProcParameters mpp);
+	LRESULT HandleDestroy(shared::MessageProcParameters mpp);
 
-	LRESULT HandleCreate(MessageProcParameters mpp);
-	LRESULT HandleSize(MessageProcParameters mpp);
-	LRESULT HandleScroll(MessageProcParameters mpp, int axis);
-	LRESULT HandlePaint(MessageProcParameters mpp);
-	LRESULT HandleDestroy(MessageProcParameters mpp);
+	virtual LRESULT HandleMessage(shared::MessageProcParameters mpp) override;
 
 	void InitializeCharDimensions();
 	void InitializeSystemMetricValues();
@@ -57,9 +37,6 @@ class SystemInformationApp
 	void DrawSystemInformation(HDC dc, int x, int y, shared::SystemInformation& system_information) const;
 
 	// Fields
-	HINSTANCE instance_;
-	HWND wnd_;
-	std::wstring window_class_name_;
 	CharDimensions char_dimensions_;
 
 	static constexpr int kFirstColumnCharacters = 22;

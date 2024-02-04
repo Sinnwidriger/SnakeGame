@@ -4,108 +4,7 @@
 namespace applications
 {
 
-std::unique_ptr<SystemInformationApp> SystemInformationApp::Create()
-{
-	auto app_pointer = std::unique_ptr<SystemInformationApp>(new SystemInformationApp);
-
-	if (app_pointer->Initialize())
-		return app_pointer;
-	else
-		return std::unique_ptr<SystemInformationApp>(nullptr);
-}
-
-SystemInformationApp::SystemInformationApp() :
-	instance_(GetModuleHandle(NULL)), wnd_(NULL), window_class_name_(L"SystemInformationApp"), char_dimensions_(CharDimensions())
-{
-#if 0
-	display_information_ = system_metrics_;
-#else
-	display_information_ = device_capabilities_;
-#endif
-}
-
-bool SystemInformationApp::Initialize()
-{
-	WNDCLASS wc = {
-		.style = CS_HREDRAW | CS_VREDRAW,
-		.lpfnWndProc = WindowProc,
-		.hInstance = instance_,
-		.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH),
-		.lpszClassName = window_class_name_.c_str()
-	};
-
-	if (!RegisterClass(&wc))
-	{
-		MessageBox(NULL, L"Window Registration failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
-		return false;
-	}
-
-	wnd_ = CreateWindow(
-		window_class_name_.c_str(),
-		L"System Information Application",
-		WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL,
-		CW_USEDEFAULT, CW_USEDEFAULT,
-		640, 480,
-		NULL, NULL,
-		instance_,
-		this
-	);
-
-	if (!wnd_)
-	{
-		MessageBox(NULL, L"Window Creation failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
-		return false;
-	}
-
-	ShowWindow(wnd_, SW_SHOWNORMAL);
-	UpdateWindow(wnd_);
-
-	return true;
-}
-
-int SystemInformationApp::Run()
-{
-	MSG msg = {};
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-	return static_cast<int>(msg.wParam);
-}
-
-LRESULT SystemInformationApp::WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-	SystemInformationApp* app_pointer = nullptr;
-
-	if (msg == WM_NCCREATE)
-	{
-		CREATESTRUCT* create_struct_pointer = reinterpret_cast<CREATESTRUCT*>(lparam);
-		app_pointer = static_cast<SystemInformationApp*>(create_struct_pointer->lpCreateParams);
-		SetWindowLongPtr(wnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(app_pointer));
-	}
-	else
-	{
-		app_pointer = reinterpret_cast<SystemInformationApp*>(GetWindowLongPtr(wnd, GWLP_USERDATA));
-	}
-
-	if (app_pointer)
-	{
-		MessageProcParameters mpp = {
-			.wnd = wnd,
-			.msg = msg,
-			.wparam = wparam,
-			.lparam = lparam
-		};
-		return app_pointer->HandleMessage(mpp);
-	}
-	else
-	{
-		return DefWindowProc(wnd, msg, wparam, lparam);
-	}
-}
-
-LRESULT SystemInformationApp::HandleMessage(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandleMessage(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -128,7 +27,13 @@ LRESULT SystemInformationApp::HandleMessage(MessageProcParameters mpp)
 	}
 }
 
-LRESULT SystemInformationApp::HandleCreate(MessageProcParameters mpp)
+SystemInformationApp::SystemInformationApp(const std::wstring& window_title) :
+	shared::Window(window_title), char_dimensions_(CharDimensions())
+{
+	display_information_ = system_metrics_;
+}
+
+LRESULT SystemInformationApp::HandleCreate(shared::MessageProcParameters mpp)
 {
 	InitializeCharDimensions();
 
@@ -138,7 +43,7 @@ LRESULT SystemInformationApp::HandleCreate(MessageProcParameters mpp)
 	return 0;
 }
 
-LRESULT SystemInformationApp::HandleSize(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandleSize(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -167,7 +72,7 @@ LRESULT SystemInformationApp::HandleSize(MessageProcParameters mpp)
 	return 0;
 }
 
-LRESULT SystemInformationApp::HandleScroll(MessageProcParameters mpp, int axis)
+LRESULT SystemInformationApp::HandleScroll(shared::MessageProcParameters mpp, int axis)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
@@ -212,14 +117,14 @@ LRESULT SystemInformationApp::HandleScroll(MessageProcParameters mpp, int axis)
 	SetScrollInfo(wnd_, axis, &si, TRUE);
 	// Update window according to scrolled distance
 	if (axis == SB_VERT)
-		ScrollWindow(wnd_, 0, char_dimensions_.height * (prev_position - si.nPos), NULL, NULL);
+		ScrollWindow(wnd_, 0, char_dimensions_.height * (prev_position - si.nPos), nullptr, nullptr);
 	else if (axis == SB_HORZ)
-		ScrollWindow(wnd_, char_dimensions_.lower_case_width * (prev_position - si.nPos), 0, NULL, NULL);
+		ScrollWindow(wnd_, char_dimensions_.lower_case_width * (prev_position - si.nPos), 0, nullptr, nullptr);
 
 	return 0;
 }
 
-LRESULT SystemInformationApp::HandlePaint(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandlePaint(shared::MessageProcParameters mpp)
 {
 
 	PAINTSTRUCT ps;
@@ -253,7 +158,7 @@ LRESULT SystemInformationApp::HandlePaint(MessageProcParameters mpp)
 	return 0;
 }
 
-LRESULT SystemInformationApp::HandleDestroy(MessageProcParameters mpp)
+LRESULT SystemInformationApp::HandleDestroy(shared::MessageProcParameters mpp)
 {
 	PostQuitMessage(0);
 	return 0;
@@ -274,7 +179,7 @@ void SystemInformationApp::InitializeCharDimensions()
 
 void SystemInformationApp::InitializeSystemMetricValues()
 {
-	for (auto system_information_pointer : system_metrics_)
+	for (auto& system_information_pointer : system_metrics_)
 	{
 		auto system_metric_pointer = std::static_pointer_cast<shared::SystemMetric>(system_information_pointer);
 		system_metric_pointer->InitializeNumericValue();
@@ -284,7 +189,7 @@ void SystemInformationApp::InitializeSystemMetricValues()
 void SystemInformationApp::InitializeDeviceCapabilityValues()
 {
 	HDC dc = GetDC(wnd_);
-	for (auto system_information_pointer : device_capabilities_)
+	for (auto& system_information_pointer : device_capabilities_)
 	{
 		auto device_capability_pointer = std::static_pointer_cast<shared::DeviceCapability>(system_information_pointer);
 		device_capability_pointer->InitializeNumericValue(dc);
