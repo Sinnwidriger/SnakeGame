@@ -10,5 +10,7 @@
 #include <memory>
 #include <algorithm>
 #include <type_traits>
+#include <numbers>
+#include <cmath>
 
 #endif

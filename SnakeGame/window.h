@@ -27,7 +27,7 @@ public:
 
 
 	template<WindowConcept T>
-	static std::unique_ptr<T> Create(const std::wstring& window_title);
+	static std::unique_ptr<T> Create();
 
 	// Public Methods
 	bool Initialize();
@@ -38,7 +38,7 @@ public:
 protected:
 	// Clients can't invoke the constructor directly
 	Window();
-	Window(const std::wstring& window_title);
+	Window(const std::wstring& window_title, DWORD window_style = WS_OVERLAPPEDWINDOW);
 
 	// Methods
 	static LRESULT CALLBACK WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -49,12 +49,13 @@ protected:
 	HWND wnd_;
 	std::wstring window_title_;
 	std::wstring window_class_name_;
+	DWORD window_style_;
 };
 
 template<WindowConcept T>
-static std::unique_ptr<T> Window::Create(const std::wstring& window_title)
+static std::unique_ptr<T> Window::Create()
 {
-	auto app_pointer = std::unique_ptr<T>(new T(window_title));
+	auto app_pointer = std::unique_ptr<T>(new T());
 
 	if (app_pointer->Initialize())
 		return app_pointer;

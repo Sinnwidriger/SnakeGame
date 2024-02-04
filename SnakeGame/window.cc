@@ -23,7 +23,7 @@ bool shared::Window::Initialize()
 	wnd_ = CreateWindow(
 		window_class_name_.c_str(),
 		window_title_.c_str(),
-		WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL,
+		WS_OVERLAPPEDWINDOW | window_style_,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		640, 480,
 		nullptr, nullptr,
@@ -58,8 +58,12 @@ Window::Window() :
 	Window(L"Default Window")
 { }
 
-Window::Window(const std::wstring& window_title) :
-	instance_(GetModuleHandle(nullptr)), wnd_(nullptr), window_title_(window_title), window_class_name_(window_title + L" Class")
+Window::Window(const std::wstring& window_title, DWORD window_style) :
+	instance_(GetModuleHandle(nullptr)),
+	wnd_(nullptr),
+	window_title_(window_title),
+	window_class_name_(window_title + L" Class"),
+	window_style_(window_style)
 { }
 
 LRESULT Window::WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)

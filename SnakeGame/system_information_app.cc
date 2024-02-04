@@ -27,8 +27,11 @@ LRESULT SystemInformationApp::HandleMessage(shared::MessageProcParameters mpp)
 	}
 }
 
-SystemInformationApp::SystemInformationApp(const std::wstring& window_title) :
-	shared::Window(window_title), char_dimensions_(CharDimensions())
+SystemInformationApp::SystemInformationApp() :
+	shared::Window(
+		L"System Information Application",
+		WS_VSCROLL | WS_HSCROLL),
+	char_dimensions_(CharDimensions())
 {
 	display_information_ = system_metrics_;
 }

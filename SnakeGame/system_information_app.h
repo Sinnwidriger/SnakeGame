@@ -20,8 +20,8 @@ class SystemInformationApp : public shared::Window
 {
 	friend class Window;
 
- private:
-	SystemInformationApp(const std::wstring& window_title);
+private:
+	SystemInformationApp();
 
 	LRESULT HandleCreate(shared::MessageProcParameters mpp);
 	LRESULT HandleSize(shared::MessageProcParameters mpp);

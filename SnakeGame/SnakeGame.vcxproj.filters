@@ -18,6 +18,9 @@
     <ClCompile Include="window.cc">
       <Filter>shared</Filter>
     </ClCompile>
+    <ClCompile Include="sin_wave_app.cc">
+      <Filter>applications</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -35,6 +38,9 @@
     </ClInclude>
     <ClInclude Include="window.h">
       <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="sin_wave_app.h">
+      <Filter>applications</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
