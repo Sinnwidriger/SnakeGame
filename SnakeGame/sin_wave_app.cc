@@ -5,19 +5,17 @@ namespace applications
 {
 
 	SinWaveApp::SinWaveApp() :
-		shared::Window(L"Sin Wave Application"),
-		client_area_width_(0), client_area_height_(0)
+		shared::Window(L"Sin Wave Application")
 	{ }
 
 LRESULT SinWaveApp::HandleSize(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
-	client_area_width_ = LOWORD(lparam);
-	client_area_height_ = HIWORD(lparam);
+	int client_area_width_ = LOWORD(lparam);
+	int client_area_height_ = HIWORD(lparam);
 
 	points_.clear();
-
 	for (int i = 0; i < 1000; ++i)
 	{
 		POINT pt = {
@@ -36,8 +34,8 @@ LRESULT SinWaveApp::HandlePaint(shared::MessageProcParameters mpp)
 	PAINTSTRUCT ps;
 	HDC dc = BeginPaint(wnd_, &ps);
 
-	MoveToEx(dc, 0, client_area_height_ / 2, nullptr);
-	LineTo(dc, client_area_width_, client_area_height_ / 2);
+	MoveToEx(dc, 0, ps.rcPaint.bottom / 2, nullptr);
+	LineTo(dc, ps.rcPaint.right, ps.rcPaint.bottom / 2);
 
 	Polyline(dc, points_.data(), static_cast<int>(points_.size()));
 

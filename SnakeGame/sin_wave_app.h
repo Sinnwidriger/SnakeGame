@@ -19,8 +19,6 @@ private:
 
   virtual LRESULT HandleMessage(shared::MessageProcParameters mpp) override;
 
-  int client_area_width_;
-  int client_area_height_;
   std::vector<POINT> points_;
 };
 
