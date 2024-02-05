@@ -2,6 +2,9 @@
 
 namespace shared
 {
+	class Window;
+	template<typename T>
+	concept WindowConcept = std::is_base_of<Window, T>::value;
 
 	struct MessageProcParameters {
 		HWND wnd;
@@ -10,9 +13,7 @@ namespace shared
 		LPARAM lparam;
 	};
 
-	class Window;
-	template<typename T>
-	concept WindowConcept = std::is_base_of<Window, T>::value;
+	using MessageCallbackFunction = LRESULT(Window::*)(MessageProcParameters);
 
 	class Window
 	{
@@ -41,7 +42,8 @@ namespace shared
 
 		// Methods
 		static LRESULT CALLBACK WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam);
-		virtual LRESULT HandleMessage(MessageProcParameters mpp);
+		LRESULT HandleMessage(MessageProcParameters mpp);
+		void AddMessageCallback(UINT listen_msg, MessageCallbackFunction callback);
 
 		// Fields
 		HINSTANCE instance_;
@@ -49,6 +51,9 @@ namespace shared
 		std::wstring window_title_;
 		std::wstring window_class_name_;
 		DWORD window_style_;
+
+	private:
+		std::unordered_map<UINT, std::function<LRESULT(shared::MessageProcParameters)>> listeners_;
 	};
 
 	template<WindowConcept T>

@@ -100,7 +100,17 @@ namespace shared
 	LRESULT Window::HandleMessage(MessageProcParameters mpp)
 	{
 		auto [wnd, msg, wparam, lparam] = mpp;
-		return DefWindowProc(wnd, msg, wparam, lparam);
+
+		auto it = listeners_.find(msg);
+		if (it != listeners_.end())
+			return listeners_[msg](mpp);
+		else
+			return DefWindowProc(wnd, msg, wparam, lparam);
+	}
+
+	void Window::AddMessageCallback(UINT listen_msg, MessageCallbackFunction callback)
+	{
+		listeners_[listen_msg] = std::bind(callback, this, std::placeholders::_1);
 	}
 
 }

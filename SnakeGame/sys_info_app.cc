@@ -6,46 +6,24 @@ namespace applications
 
 	void SysInfoApp::SetContentType(SysInfoAppContentType content_type)
 	{
-		switch (content_type)
-		{
-		case SysInfoAppContentType::kSystemMetrics:
-			display_information_ = system_metrics_;
-			break;
-		case SysInfoAppContentType::kDeviceCapabilities:
-			display_information_ = device_capabilities_;
-			break;
-		}
-
+		display_information_ = content_type_map_[content_type];
 		InvalidateRect(wnd_, nullptr, TRUE);
-	}
-
-	LRESULT SysInfoApp::HandleMessage(shared::MessageProcParameters mpp)
-	{
-		auto [wnd, msg, wparam, lparam] = mpp;
-
-		switch (msg)
-		{
-		case WM_CREATE:
-			return HandleCreate(mpp);
-		case WM_SIZE:
-			return HandleSize(mpp);
-		case WM_VSCROLL:
-			return HandleScroll(mpp, SB_VERT);
-		case WM_HSCROLL:
-			return HandleScroll(mpp, SB_HORZ);
-		case WM_PAINT:
-			return HandlePaint(mpp);
-		case WM_DESTROY:
-			return HandleDestroy(mpp);
-		default:
-			return DefWindowProc(wnd, msg, wparam, lparam);
-		}
 	}
 
 	SysInfoApp::SysInfoApp() :
 		shared::Window(L"System Information Application", WS_VSCROLL | WS_HSCROLL),
 		char_dimensions_(CharDimensions())
-	{ }
+	{
+		AddMessageCallback(WM_CREATE, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleCreate));
+		AddMessageCallback(WM_SIZE, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleSize));
+		AddMessageCallback(WM_VSCROLL, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleVertScroll));
+		AddMessageCallback(WM_HSCROLL, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleHorzScroll));
+		AddMessageCallback(WM_PAINT, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandlePaint));
+		AddMessageCallback(WM_DESTROY, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleDestroy));
+
+		content_type_map_[SysInfoAppContentType::kSystemMetrics] = system_metrics_;
+		content_type_map_[SysInfoAppContentType::kDeviceCapabilities] = device_capabilities_;
+	}
 
 	LRESULT SysInfoApp::HandleCreate(shared::MessageProcParameters mpp)
 	{
@@ -85,6 +63,16 @@ namespace applications
 		return 0;
 	}
 
+	LRESULT SysInfoApp::HandleVertScroll(shared::MessageProcParameters mpp)
+	{
+		return HandleScroll(mpp, SB_VERT);
+	}
+
+	LRESULT SysInfoApp::HandleHorzScroll(shared::MessageProcParameters mpp)
+	{
+		return HandleScroll(mpp, SB_HORZ);
+	}
+
 	LRESULT SysInfoApp::HandleScroll(shared::MessageProcParameters mpp, int axis)
 	{
 		auto [wnd, msg, wparam, lparam] = mpp;
@@ -94,7 +82,7 @@ namespace applications
 			.fMask = SIF_ALL
 		};
 
-		// Get current vertical scroll state
+		// Get current scroll state
 		GetScrollInfo(wnd_, axis, &si);
 		int prev_position = si.nPos;
 
@@ -222,20 +210,19 @@ namespace applications
 		std::wstring column3 = system_information.numeric_value();
 
 		SetTextAlign(dc, TA_LEFT | TA_TOP);
+
 		TextOut(
 			dc, x1, y,
-			column1.c_str(), static_cast<int>(column1.size())
-		);
+			column1.c_str(), static_cast<int>(column1.size()));
 		TextOut(
 			dc, x2, y,
-			column2.c_str(), static_cast<int>(column2.size())
-		);
+			column2.c_str(), static_cast<int>(column2.size()));
 
 		SetTextAlign(dc, TA_RIGHT | TA_TOP);
+
 		TextOut(
 			dc, x3, y,
-			column3.c_str(), static_cast<int>(column3.size())
-		);
+			column3.c_str(), static_cast<int>(column3.size()));
 	
 		SetTextAlign(dc, TA_LEFT | TA_TOP);
 	}

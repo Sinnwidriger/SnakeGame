@@ -33,11 +33,11 @@ namespace applications
 
 		LRESULT HandleCreate(shared::MessageProcParameters mpp);
 		LRESULT HandleSize(shared::MessageProcParameters mpp);
+		LRESULT HandleVertScroll(shared::MessageProcParameters mpp);
+		LRESULT HandleHorzScroll(shared::MessageProcParameters mpp);
 		LRESULT HandleScroll(shared::MessageProcParameters mpp, int axis);
 		LRESULT HandlePaint(shared::MessageProcParameters mpp);
 		LRESULT HandleDestroy(shared::MessageProcParameters mpp);
-
-		virtual LRESULT HandleMessage(shared::MessageProcParameters mpp) override;
 
 
 		void InitializeCharDimensions();
@@ -50,6 +50,8 @@ namespace applications
 
 		static constexpr int kFirstColumnCharacters = 22;
 		static constexpr int kSecondColumnCharacters = 40;
+
+		std::unordered_map<SysInfoAppContentType, std::vector<std::shared_ptr<sys_info_types::SystemInformation>>> content_type_map_;
 
 		std::vector<std::shared_ptr<sys_info_types::SystemInformation>> display_information_;
 
