@@ -13,6 +13,9 @@ namespace applications
 		case DrawAppContentType::kDrawLines:
 			draw_function_callback_ = std::bind(&BasicDrawingApp::DrawLines, this, std::placeholders::_1, std::placeholders::_2);
 			break;
+		case DrawAppContentType::kDrawBezier:
+			draw_function_callback_ = std::bind(&BasicDrawingApp::DrawBezier, this, std::placeholders::_1, std::placeholders::_2);
+			break;
 		}
 
 		InvalidateRect(wnd_, nullptr, TRUE);
@@ -31,6 +34,23 @@ namespace applications
 		int client_area_height = HIWORD(lparam);
 
 		InitializeSinWavePoints(client_area_width, client_area_height);
+		InitializeBezierPoints(client_area_width, client_area_height);
+
+		return 0;
+	}
+
+	LRESULT BasicDrawingApp::HandleMouse(shared::MessageProcParameters mpp)
+	{
+		auto [wnd, msg, wparam, lparam] = mpp;
+		
+		if (wparam & MK_LBUTTON || wparam & MK_RBUTTON)
+		{
+			bezier_points_[wparam] = {
+				.x = LOWORD(lparam),
+				.y = HIWORD(lparam)
+			};
+			InvalidateRect(wnd_, nullptr, TRUE);
+		}
 
 		return 0;
 	}
@@ -61,6 +81,10 @@ namespace applications
 		{
 		case WM_SIZE:
 			return HandleSize(mpp);
+		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+		case WM_MOUSEMOVE:
+			return HandleMouse(mpp);
 		case WM_PAINT:
 			return HandlePaint(mpp);
 		case WM_DESTROY:
@@ -82,6 +106,16 @@ namespace applications
 
 			sin_wave_points_.push_back(pt);
 		}
+	}
+
+	void BasicDrawingApp::InitializeBezierPoints(int client_area_width, int client_area_height)
+	{
+		bezier_points_.clear();
+
+		bezier_points_.push_back({ client_area_width / 4, client_area_height / 2 });
+		bezier_points_.push_back({ client_area_width / 2, client_area_height / 4 });
+		bezier_points_.push_back({ client_area_width / 2, client_area_height * 3 / 4 });
+		bezier_points_.push_back({ client_area_width * 3 / 4, client_area_height / 2 });
 	}
 
 	void BasicDrawingApp::DrawSinWave(HDC dc, PAINTSTRUCT ps)
@@ -106,6 +140,18 @@ namespace applications
 
 		Ellipse(dc, client_width / 8, client_height / 8, client_width * 7 / 8, client_height * 7 / 8);
 		RoundRect(dc, client_width / 4, client_height / 4, client_width * 3 / 4, client_height * 3 / 4, client_width / 4, client_height / 4);
+	}
+
+	void BasicDrawingApp::DrawBezier(HDC dc, PAINTSTRUCT ps)
+	{
+		PolyBezier(dc, bezier_points_.data(), bezier_points_.size());
+
+		MoveToEx(dc, bezier_points_[0].x, bezier_points_[0].y, nullptr);
+		LineTo(dc, bezier_points_[1].x, bezier_points_[1].y);
+
+
+		MoveToEx(dc, bezier_points_[2].x, bezier_points_[2].y, nullptr);
+		LineTo(dc, bezier_points_[3].x, bezier_points_[3].y);
 	}
 
 }

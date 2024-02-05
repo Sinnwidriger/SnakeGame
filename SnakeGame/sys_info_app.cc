@@ -43,18 +43,15 @@ namespace applications
 	}
 
 	SysInfoApp::SysInfoApp() :
-		shared::Window(
-			L"System Information Application",
-			WS_VSCROLL | WS_HSCROLL),
+		shared::Window(L"System Information Application", WS_VSCROLL | WS_HSCROLL),
 		char_dimensions_(CharDimensions())
-	{
-		InitializeSystemMetricValues();
-		InitializeDeviceCapabilityValues();
-	}
+	{ }
 
 	LRESULT SysInfoApp::HandleCreate(shared::MessageProcParameters mpp)
 	{
 		InitializeCharDimensions();
+		InitializeSystemMetricValues();
+		InitializeDeviceCapabilityValues();
 
 		return 0;
 	}

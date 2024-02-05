@@ -26,7 +26,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		{
 			app = applications::BasicDrawingApp::Create<applications::BasicDrawingApp>();
 			auto basic_draw_app_pointer = std::static_pointer_cast<applications::BasicDrawingApp>(app);
-			basic_draw_app_pointer->SetContentType(applications::DrawAppContentType::kDrawLines);
+			basic_draw_app_pointer->SetContentType(applications::DrawAppContentType::kDrawBezier);
 			break;
 		}
 	}
