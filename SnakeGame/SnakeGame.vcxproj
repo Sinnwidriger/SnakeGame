@@ -88,6 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="char_dimensions.cc" />
     <ClCompile Include="device_capability.cc" />
     <ClCompile Include="main.cc" />
     <ClCompile Include="pch.cc">
@@ -98,15 +99,18 @@
     <ClCompile Include="system_information.cc" />
     <ClCompile Include="system_metric.cc" />
     <ClCompile Include="sys_info_app.cc" />
+    <ClCompile Include="what_size_app.cc" />
     <ClCompile Include="window.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="char_dimensions.h" />
     <ClInclude Include="device_capability.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="basic_drawing_app.h" />
     <ClInclude Include="system_information.h" />
     <ClInclude Include="system_metric.h" />
     <ClInclude Include="sys_info_app.h" />
+    <ClInclude Include="what_size_app.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

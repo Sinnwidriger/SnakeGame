@@ -12,7 +12,7 @@ namespace applications
 
 	SysInfoApp::SysInfoApp() :
 		shared::Window(L"System Information Application", WS_VSCROLL | WS_HSCROLL),
-		char_dimensions_(CharDimensions())
+		char_dimensions_(sys_info_types::CharDimensions())
 	{
 		AddMessageCallback(WM_CREATE, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleCreate));
 		AddMessageCallback(WM_SIZE, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleSize));
@@ -27,6 +27,8 @@ namespace applications
 
 	LRESULT SysInfoApp::HandleCreate(shared::MessageProcParameters mpp)
 	{
+		display_information_ = system_metrics_;
+
 		InitializeCharDimensions();
 		InitializeSystemMetricValues();
 		InitializeDeviceCapabilityValues();
@@ -144,12 +146,17 @@ namespace applications
 		GetScrollInfo(wnd_, SB_HORZ, &horizontal_scroll_info);
 		int horizontal_scroll_position = horizontal_scroll_info.nPos;
 
+		SetWindowOrgEx(dc,
+			horizontal_scroll_position * char_dimensions_.lower_case_width,
+			vertical_scroll_position * char_dimensions_.height,
+			nullptr);
+
 		for (int i = 0; i < display_information_.size(); ++i)
 		{
 			DrawSystemInformation(
 				dc,
-				(1 - horizontal_scroll_position) * char_dimensions_.lower_case_width,
-				(i - vertical_scroll_position) * char_dimensions_.height,
+				char_dimensions_.lower_case_width,
+				i * char_dimensions_.height,
 				*display_information_[i]
 			);
 		}

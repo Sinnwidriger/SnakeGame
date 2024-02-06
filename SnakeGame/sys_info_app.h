@@ -4,6 +4,7 @@
 #include "system_metric.h"
 #include "device_capability.h"
 #include "window.h"
+#include "char_dimensions.h"
 
 namespace applications
 {
@@ -12,13 +13,6 @@ namespace applications
 	{
 		kSystemMetrics = 0,
 		kDeviceCapabilities = 1
-	};
-
-	struct CharDimensions
-	{
-		unsigned int lower_case_width;
-		unsigned int upper_case_width;
-		unsigned int height;
 	};
 
 	class SysInfoApp : public shared::Window
@@ -46,7 +40,7 @@ namespace applications
 		void DrawSystemInformation(HDC dc, int x, int y, sys_info_types::SystemInformation& system_information) const;
 
 		// Fields
-		CharDimensions char_dimensions_;
+		sys_info_types::CharDimensions char_dimensions_;
 
 		static constexpr int kFirstColumnCharacters = 22;
 		static constexpr int kSecondColumnCharacters = 40;

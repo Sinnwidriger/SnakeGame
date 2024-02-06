@@ -11,7 +11,6 @@ namespace applications
 
 	BasicDrawingApp::BasicDrawingApp() :
 		shared::Window(L"Basic Drawing Application")
-		/*draw_function_callback_(std::bind(&BasicDrawingApp::DrawSinWave, this, std::placeholders::_1, std::placeholders::_2))*/
 	{
 		AddMessageCallback(WM_SIZE, static_cast<shared::MessageCallbackFunction>(&BasicDrawingApp::HandleSize));
 		AddMessageCallback(WM_PAINT, static_cast<shared::MessageCallbackFunction>(&BasicDrawingApp::HandlePaint));
