@@ -1,8 +1,14 @@
 #pragma once
 
+#ifdef SHAREDCOMPONENTS_EXPORTS
+#define SHAREDCOMPONENTS_API __declspec(dllexport)
+#else
+#define SHAREDCOMPONENTS_API __declspec(dllimport)
+#endif
+
 namespace shared
 {
-	class Window;
+	class SHAREDCOMPONENTS_API Window;
 	template<typename T>
 	concept WindowConcept = std::is_base_of<Window, T>::value;
 
@@ -15,7 +21,7 @@ namespace shared
 
 	using MessageCallbackFunction = LRESULT(Window::*)(MessageProcParameters);
 
-	class Window
+	class SHAREDCOMPONENTS_API Window
 	{
 	public:
 		// Constructors

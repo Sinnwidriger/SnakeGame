@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cc" />
+    <ClCompile Include="stdafx.cc" />
+    <ClCompile Include="drawing_app.cc">
+      <Filter>drawing_app</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="drawing_app">
+      <UniqueIdentifier>{1d4ebb92-2827-4493-8282-095281793d13}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="drawing_app.h">
+      <Filter>drawing_app</Filter>
+    </None>
+  </ItemGroup>
+</Project>

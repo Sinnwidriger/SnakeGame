@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "stdafx.h"
 #include "system_information.h"
 
 namespace sys_info_types

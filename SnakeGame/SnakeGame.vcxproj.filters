@@ -3,76 +3,8 @@
   <ItemGroup>
     <ClCompile Include="main.cc" />
     <ClCompile Include="pch.cc" />
-    <ClCompile Include="window.cc">
-      <Filter>shared</Filter>
-    </ClCompile>
-    <ClCompile Include="basic_drawing_app.cc">
-      <Filter>applications\basic_drawing_app</Filter>
-    </ClCompile>
-    <ClCompile Include="device_capability.cc">
-      <Filter>applications\sys_info_app\sys_info_types</Filter>
-    </ClCompile>
-    <ClCompile Include="system_information.cc">
-      <Filter>applications\sys_info_app\sys_info_types</Filter>
-    </ClCompile>
-    <ClCompile Include="system_metric.cc">
-      <Filter>applications\sys_info_app\sys_info_types</Filter>
-    </ClCompile>
-    <ClCompile Include="what_size_app.cc">
-      <Filter>applications\what_size_app</Filter>
-    </ClCompile>
-    <ClCompile Include="char_dimensions.cc">
-      <Filter>applications\sys_info_app\sys_info_types</Filter>
-    </ClCompile>
-    <ClCompile Include="sys_info_app.cc">
-      <Filter>applications\sys_info_app</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="window.h">
-      <Filter>shared</Filter>
-    </ClInclude>
-    <ClInclude Include="sys_info_app.h">
-      <Filter>applications\sys_info_app</Filter>
-    </ClInclude>
-    <ClInclude Include="basic_drawing_app.h">
-      <Filter>applications\basic_drawing_app</Filter>
-    </ClInclude>
-    <ClInclude Include="device_capability.h">
-      <Filter>applications\sys_info_app\sys_info_types</Filter>
-    </ClInclude>
-    <ClInclude Include="system_information.h">
-      <Filter>applications\sys_info_app\sys_info_types</Filter>
-    </ClInclude>
-    <ClInclude Include="system_metric.h">
-      <Filter>applications\sys_info_app\sys_info_types</Filter>
-    </ClInclude>
-    <ClInclude Include="what_size_app.h">
-      <Filter>applications\what_size_app</Filter>
-    </ClInclude>
-    <ClInclude Include="char_dimensions.h">
-      <Filter>applications\sys_info_app\sys_info_types</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="shared">
-      <UniqueIdentifier>{9a9b75b4-2ee3-476e-a244-3d911d202625}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="applications">
-      <UniqueIdentifier>{2134f4ba-dd2a-4799-8d28-4fd148b0f6df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="applications\sys_info_app">
-      <UniqueIdentifier>{fbf5ddc3-c92b-4e84-a6c7-9733e1c7c092}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="applications\basic_drawing_app">
-      <UniqueIdentifier>{26b7fc01-bee1-4d78-b9a1-e96240bbe04c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="applications\sys_info_app\sys_info_types">
-      <UniqueIdentifier>{b088f45d-6ab7-4d1b-9814-6cfd26d96213}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="applications\what_size_app">
-      <UniqueIdentifier>{c31c7c6d-7e1c-47e3-9260-bbb348ce0d22}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>
