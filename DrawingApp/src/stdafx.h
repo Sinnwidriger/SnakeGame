@@ -15,5 +15,5 @@
 #include <unordered_map>
 #include <cstdlib>
 
-#include "SharedComponents/window.h"
-#include "SharedComponents/gdi_obj.h"
+#include "shared_components/window.h"
+#include "shared_components/gdi_obj.h"

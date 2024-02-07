@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="window.h">
-      <Filter>shared</Filter>
-    </ClInclude>
-    <ClInclude Include="gdi_obj.h">
-      <Filter>shared</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="window.cc">
-      <Filter>shared</Filter>
-    </ClCompile>
-    <ClCompile Include="gdi_obj.cc">
-      <Filter>shared</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="shared">
+    <Filter Include="shared_components">
       <UniqueIdentifier>{433c88a7-01ec-44a1-bb3d-7d25069c8451}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\shared_components\gdi_obj.cc">
+      <Filter>shared_components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shared_components\window.cc">
+      <Filter>shared_components</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\framework.h" />
+    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\shared_components\gdi_obj.h">
+      <Filter>shared_components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shared_components\window.h">
+      <Filter>shared_components</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
