@@ -46,10 +46,19 @@ namespace shared
 	int shared::Window::Run()
 	{
 		MSG msg = {};
-		while (GetMessage(&msg, nullptr, 0, 0))
+		while (true)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+			{
+				if (msg.message == WM_QUIT)
+					break;
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				Idle();
+			}
 		}
 		return static_cast<int>(msg.wParam);
 	}
@@ -107,6 +116,9 @@ namespace shared
 		else
 			return DefWindowProc(wnd, msg, wparam, lparam);
 	}
+
+	void Window::Idle()
+	{ }
 
 	void Window::AddMessageCallback(UINT listen_msg, MessageCallbackFunction callback)
 	{

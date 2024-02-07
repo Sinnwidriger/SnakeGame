@@ -4,7 +4,7 @@
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PSTR szCmdLine, _In_ int iCmdShow)
 {
 	auto app = shared::Window::Create<DrawingApp>();
-	app->SetContentType(DrawAppContentType::kDrawBezier);
+	app->SetContentType(DrawAppContentType::kDrawClover);
 
 	if (!app)
 	{

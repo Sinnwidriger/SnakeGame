@@ -1,47 +1,59 @@
 #pragma once
 
 enum class DrawAppContentType
-  {
-    kDrawSinWave = 0,
-    kDrawLines = 1,
-    kDrawBezier = 2,
-    kDrawPolygon = 3
-  };
+{
+  kDrawNothing = 0,
+  kDrawSinWave = 1,
+  kDrawLines = 2,
+  kDrawBezier = 3,
+  kDrawPolygon = 4,
+  kDrawClover = 5
+};
 
-  class DrawingApp;
+class DrawingApp;
 
-  using DrawFunctionCallback = void(DrawingApp::*)(HDC, PAINTSTRUCT);
+using DrawFunctionCallback = void(DrawingApp::*)(HDC, PAINTSTRUCT);
 
-  class DrawingApp : public shared::Window
-  {
-    friend class Window;
+class DrawingApp : public shared::Window
+{
+  friend class Window;
 
-  public:
-    void SetContentType(DrawAppContentType content_type);
+public:
+  void SetContentType(DrawAppContentType content_type);
 
-  private:
-    DrawingApp();
+private:
+  DrawingApp();
 
-    LRESULT HandleSize(shared::MessageProcParameters mpp);
-    LRESULT HandleMouse(shared::MessageProcParameters mpp);
-    LRESULT HandlePaint(shared::MessageProcParameters mpp);
-    LRESULT HandleDestroy(shared::MessageProcParameters mpp);
+  LRESULT HandleSize(shared::MessageProcParameters mpp);
+  LRESULT HandleMouse(shared::MessageProcParameters mpp);
+  LRESULT HandlePaint(shared::MessageProcParameters mpp);
+  LRESULT HandleDestroy(shared::MessageProcParameters mpp);
 
-    auto GetBindedDrawFunctionCallback(DrawFunctionCallback callback) -> std::function<void(HDC, PAINTSTRUCT)>;
+  virtual void Idle() override;
 
-    void InitializeSinWavePoints(int client_area_width, int client_area_height);
-    void InitializeBezierPoints(int client_area_width, int client_area_height);
-    void InitializePolygonPoints(int client_area_width, int client_area_height);
+  auto GetBindedDrawFunctionCallback(DrawFunctionCallback callback) -> std::function<void(HDC, PAINTSTRUCT)>;
 
-    void DrawSinWave(HDC dc, PAINTSTRUCT ps);
-    void DrawLines(HDC dc, PAINTSTRUCT ps);
-    void DrawBezier(HDC dc, PAINTSTRUCT ps);
-    void DrawPolygon(HDC dc, PAINTSTRUCT ps);
+  void InitializeSinWavePoints();
+  void InitializeBezierPoints();
+  void InitializePolygonPoints();
+  void InitializeCloverRegion();
 
-    // Fields
-    DrawAppContentType draw_content_type_;
-    std::unordered_map<DrawAppContentType, std::function<void(HDC, PAINTSTRUCT)>> draw_function_callback_map_;
-    std::vector<POINT> sin_wave_points_;
-    std::vector<POINT> bezier_points_;
-    std::vector<POINT> polygon_points_;
-  };
+  void DrawNothing(HDC dc, PAINTSTRUCT ps);
+  void DrawSinWave(HDC dc, PAINTSTRUCT ps);
+  void DrawLines(HDC dc, PAINTSTRUCT ps);
+  void DrawBezier(HDC dc, PAINTSTRUCT ps);
+  void DrawPolygon(HDC dc, PAINTSTRUCT ps);
+  void DrawClover(HDC dc, PAINTSTRUCT ps);
+
+  // Fields
+  DrawAppContentType draw_content_type_;
+  std::unordered_map<DrawAppContentType, std::function<void(HDC, PAINTSTRUCT)>> draw_function_callback_map_;
+  std::vector<POINT> sin_wave_points_;
+  std::vector<POINT> bezier_points_;
+  std::vector<POINT> polygon_points_;
+
+  shared::GDIObj<HRGN> clover_region_ = CreateRectRgn(0, 0, 1, 1);
+
+  int client_area_width_;
+  int client_area_height_;
+};

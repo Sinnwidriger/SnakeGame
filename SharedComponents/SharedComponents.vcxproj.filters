@@ -6,11 +6,17 @@
     <ClInclude Include="window.h">
       <Filter>shared</Filter>
     </ClInclude>
+    <ClInclude Include="gdi_obj.h">
+      <Filter>shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="window.cc">
+      <Filter>shared</Filter>
+    </ClCompile>
+    <ClCompile Include="gdi_obj.cc">
       <Filter>shared</Filter>
     </ClCompile>
   </ItemGroup>

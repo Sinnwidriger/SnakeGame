@@ -18,22 +18,25 @@ DrawingApp::DrawingApp() :
 	AddMessageCallback(WM_LBUTTONDOWN, static_cast<shared::MessageCallbackFunction>(&DrawingApp::HandleMouse));
 	AddMessageCallback(WM_RBUTTONDOWN, static_cast<shared::MessageCallbackFunction>(&DrawingApp::HandleMouse));
 
+	draw_function_callback_map_[DrawAppContentType::kDrawNothing] = GetBindedDrawFunctionCallback(&DrawingApp::DrawNothing);
 	draw_function_callback_map_[DrawAppContentType::kDrawSinWave] = GetBindedDrawFunctionCallback(&DrawingApp::DrawSinWave);
 	draw_function_callback_map_[DrawAppContentType::kDrawLines] = GetBindedDrawFunctionCallback(&DrawingApp::DrawLines);
 	draw_function_callback_map_[DrawAppContentType::kDrawBezier] = GetBindedDrawFunctionCallback(&DrawingApp::DrawBezier);
 	draw_function_callback_map_[DrawAppContentType::kDrawPolygon] = GetBindedDrawFunctionCallback(&DrawingApp::DrawPolygon);
+	draw_function_callback_map_[DrawAppContentType::kDrawClover] = GetBindedDrawFunctionCallback(&DrawingApp::DrawClover);
 }
 
 LRESULT DrawingApp::HandleSize(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
-	int client_area_width = LOWORD(lparam);
-	int client_area_height = HIWORD(lparam);
+	client_area_width_ = LOWORD(lparam);
+	client_area_height_ = HIWORD(lparam);
 
-	InitializeSinWavePoints(client_area_width, client_area_height);
-	InitializeBezierPoints(client_area_width, client_area_height);
-	InitializePolygonPoints(client_area_width, client_area_height);
+	InitializeSinWavePoints();
+	InitializeBezierPoints();
+	InitializePolygonPoints();
+	InitializeCloverRegion();
 
 	return 0;
 }
@@ -57,10 +60,13 @@ LRESULT DrawingApp::HandleMouse(shared::MessageProcParameters mpp)
 LRESULT DrawingApp::HandlePaint(shared::MessageProcParameters mpp)
 {
 	PAINTSTRUCT ps;
+
 	HDC dc = BeginPaint(wnd_, &ps);
+	SaveDC(dc);
 
 	draw_function_callback_map_[draw_content_type_](dc, ps);
 
+	RestoreDC(dc, -1);
 	EndPaint(wnd_, &ps);
 
 	return 0;
@@ -72,50 +78,89 @@ LRESULT DrawingApp::HandleDestroy(shared::MessageProcParameters mpp)
 	return 0;
 }
 
+void DrawingApp::Idle()
+{
+	if (draw_content_type_ == DrawAppContentType::kDrawNothing)
+	{
+		HDC dc = GetDC(wnd_);
+		RECT rect;
+
+		if (client_area_width_ == 0 || client_area_height_ == 0)
+			return;
+
+		shared::GDIObj<HBRUSH> brush = CreateSolidBrush(RGB(rand() % 256, rand() % 256, rand() % 256));
+
+		SetRect(&rect, rand() % client_area_width_, rand() % client_area_height_, rand() % client_area_width_, rand() % client_area_height_);
+		FillRect(dc, &rect, brush);
+
+		ReleaseDC(wnd_, dc);
+
+		Sleep(100);
+	}
+}
+
 auto DrawingApp::GetBindedDrawFunctionCallback(DrawFunctionCallback callback) -> std::function<void(HDC, PAINTSTRUCT)>
 {
 	return std::bind(callback, this, std::placeholders::_1, std::placeholders::_2);
 }
 
-void DrawingApp::InitializeSinWavePoints(int client_area_width, int client_area_height)
+void DrawingApp::InitializeSinWavePoints()
 {
 	sin_wave_points_.clear();
 	for (int i = 0; i < 1000; ++i)
 	{
 		POINT pt = {
-			.x = i * client_area_width / 1000,
-			.y = static_cast<int>(client_area_height / 2 * (1 - std::sin(2 * std::numbers::pi * i / 1000)))
+			.x = i * client_area_width_ / 1000,
+			.y = static_cast<int>(client_area_height_ / 2 * (1 - std::sin(2 * std::numbers::pi * i / 1000)))
 		};
 
 		sin_wave_points_.push_back(pt);
 	}
 }
 
-void DrawingApp::InitializeBezierPoints(int client_area_width, int client_area_height)
+void DrawingApp::InitializeBezierPoints()
 {
 	bezier_points_.clear();
 
-	bezier_points_.push_back({ client_area_width / 4, client_area_height / 2 });
-	bezier_points_.push_back({ client_area_width / 2, client_area_height / 4 });
-	bezier_points_.push_back({ client_area_width / 2, client_area_height * 3 / 4 });
-	bezier_points_.push_back({ client_area_width * 3 / 4, client_area_height / 2 });
+	bezier_points_.push_back({ client_area_width_ / 4, client_area_height_ / 2 });
+	bezier_points_.push_back({ client_area_width_ / 2, client_area_height_ / 4 });
+	bezier_points_.push_back({ client_area_width_ / 2, client_area_height_ * 3 / 4 });
+	bezier_points_.push_back({ client_area_width_ * 3 / 4, client_area_height_ / 2 });
 }
 
-void DrawingApp::InitializePolygonPoints(int client_area_width, int client_area_height)
+void DrawingApp::InitializePolygonPoints()
 {
 	polygon_points_.clear();
 
-	polygon_points_.push_back({ 10 * client_area_width / 200, 70 * client_area_height / 100 });
-	polygon_points_.push_back({ 50 * client_area_width / 200, 70 * client_area_height / 100 });
-	polygon_points_.push_back({ 50 * client_area_width / 200, 10 * client_area_height / 100 });
-	polygon_points_.push_back({ 90 * client_area_width / 200, 10 * client_area_height / 100 });
-	polygon_points_.push_back({ 90 * client_area_width / 200, 50 * client_area_height / 100 });
-	polygon_points_.push_back({ 30 * client_area_width / 200, 50 * client_area_height / 100 });
-	polygon_points_.push_back({ 30 * client_area_width / 200, 90 * client_area_height / 100 });
-	polygon_points_.push_back({ 70 * client_area_width / 200, 90 * client_area_height / 100 });
-	polygon_points_.push_back({ 70 * client_area_width / 200, 30 * client_area_height / 100 });
-	polygon_points_.push_back({ 10 * client_area_width / 200, 30 * client_area_height / 100 });
+	polygon_points_.push_back({ 10 * client_area_width_ / 200, 70 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 50 * client_area_width_ / 200, 70 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 50 * client_area_width_ / 200, 10 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 90 * client_area_width_ / 200, 10 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 90 * client_area_width_ / 200, 50 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 30 * client_area_width_ / 200, 50 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 30 * client_area_width_ / 200, 90 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 70 * client_area_width_ / 200, 90 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 70 * client_area_width_ / 200, 30 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 10 * client_area_width_ / 200, 30 * client_area_height_ / 100 });
 }
+
+void DrawingApp::InitializeCloverRegion()
+{
+	shared::GDIObj<HRGN> left_leaf = CreateEllipticRgn(0, client_area_height_ / 3, client_area_width_ / 2, client_area_height_ * 2 / 3);
+	shared::GDIObj<HRGN> right_leaf = CreateEllipticRgn(client_area_width_ / 2, client_area_height_ / 3, client_area_width_, client_area_height_ * 2 / 3);
+	shared::GDIObj<HRGN> top_leaf = CreateEllipticRgn(client_area_width_ / 3, 0, client_area_width_ * 2 / 3, client_area_height_ / 2);
+	shared::GDIObj<HRGN> bottom_leaf = CreateEllipticRgn(client_area_width_ / 3, client_area_height_ / 2, client_area_width_ * 2 / 3, client_area_height_);
+	
+	shared::GDIObj<HRGN> horz_leaves = CreateRectRgn(0, 0, 1, 1);
+	shared::GDIObj<HRGN> vert_leaves = CreateRectRgn(0, 0, 1, 1);
+
+	CombineRgn(horz_leaves, left_leaf, right_leaf, RGN_OR);
+	CombineRgn(vert_leaves, top_leaf, bottom_leaf, RGN_OR);
+	CombineRgn(clover_region_, horz_leaves, vert_leaves, RGN_XOR);
+}
+
+void DrawingApp::DrawNothing(HDC dc, PAINTSTRUCT ps)
+{ }
 
 void DrawingApp::DrawSinWave(HDC dc, PAINTSTRUCT ps)
 {
@@ -166,4 +211,18 @@ void DrawingApp::DrawPolygon(HDC dc, PAINTSTRUCT ps)
 
 	SetPolyFillMode(dc, WINDING);
 	Polygon(dc, polygon_points_.data(), polygon_points_.size());
+}
+
+void DrawingApp::DrawClover(HDC dc, PAINTSTRUCT ps)
+{
+	SelectClipRgn(dc, clover_region_);
+	SetWindowOrgEx(dc, -client_area_width_ / 2, -client_area_height_ / 2, nullptr);
+
+	double radius = max(client_area_width_ / 2, client_area_height_ / 2);
+
+	for (double angle = 0.0; angle < std::numbers::pi * 2; angle += std::numbers::pi / 180)
+	{
+		MoveToEx(dc, 0, 0, nullptr);
+		LineTo(dc, (int)(radius * std::cos(angle)), (int)(radius * std::sin(angle)));
+	}
 }

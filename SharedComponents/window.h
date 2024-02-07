@@ -49,6 +49,7 @@ namespace shared
 		// Methods
 		static LRESULT CALLBACK WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam);
 		LRESULT HandleMessage(MessageProcParameters mpp);
+		virtual void Idle();
 		void AddMessageCallback(UINT listen_msg, MessageCallbackFunction callback);
 
 		// Fields

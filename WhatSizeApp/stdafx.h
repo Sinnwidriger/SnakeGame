@@ -13,5 +13,6 @@
 #include <cmath>
 #include <functional>
 #include <unordered_map>
+#include <cstdlib>
 
 #include "SharedComponents/window.h"
