@@ -1,12 +1,11 @@
 #pragma once
 #pragma once
 
-#include "SharedComponents/window.h"
-#include "system_information.h"
-#include "system_metric.h"
-#include "device_capability.h"
+#include "sys_info_types/system_information.h"
+#include "sys_info_types/system_metric.h"
+#include "sys_info_types/device_capability.h"
 
-enum class SysInfoAppContentType
+enum class SysInfoAppContent
 {
 	kSystemMetrics = 0,
 	kDeviceCapabilities = 1
@@ -24,7 +23,7 @@ class SysInfoApp : public shared::Window
 	friend class Window;
 
 public:
-	void SetContentType(SysInfoAppContentType content_type);
+	void SetContentType(SysInfoAppContent content_type);
 
 private:
 	SysInfoApp();
@@ -49,7 +48,7 @@ private:
 	static constexpr int kFirstColumnCharacters = 22;
 	static constexpr int kSecondColumnCharacters = 40;
 
-	std::unordered_map<SysInfoAppContentType, std::vector<std::shared_ptr<sys_info_types::SystemInformation>>> content_type_map_;
+	std::unordered_map<SysInfoAppContent, std::vector<std::shared_ptr<sys_info_types::SystemInformation>>> content_type_map_;
 
 	std::vector<std::shared_ptr<sys_info_types::SystemInformation>> display_information_;
 

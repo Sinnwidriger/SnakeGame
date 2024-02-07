@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "sys_info_app.h"
 
-void SysInfoApp::SetContentType(SysInfoAppContentType content_type)
+void SysInfoApp::SetContentType(SysInfoAppContent content_type)
 {
 	display_information_ = content_type_map_[content_type];
 	InvalidateRect(wnd_, nullptr, TRUE);
@@ -11,15 +11,15 @@ SysInfoApp::SysInfoApp() :
 	shared::Window(L"System Information Application", WS_VSCROLL | WS_HSCROLL),
 	char_dimensions_(CharDimensions())
 {
-	AddMessageCallback(WM_CREATE, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleCreate));
-	AddMessageCallback(WM_SIZE, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleSize));
-	AddMessageCallback(WM_VSCROLL, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleVertScroll));
-	AddMessageCallback(WM_HSCROLL, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleHorzScroll));
-	AddMessageCallback(WM_PAINT, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandlePaint));
-	AddMessageCallback(WM_DESTROY, static_cast<shared::MessageCallbackFunction>(&SysInfoApp::HandleDestroy));
+	AddMessageCallback(WM_CREATE, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleCreate));
+	AddMessageCallback(WM_SIZE, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleSize));
+	AddMessageCallback(WM_VSCROLL, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleVertScroll));
+	AddMessageCallback(WM_HSCROLL, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleHorzScroll));
+	AddMessageCallback(WM_PAINT, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandlePaint));
+	AddMessageCallback(WM_DESTROY, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleDestroy));
 
-	content_type_map_[SysInfoAppContentType::kSystemMetrics] = system_metrics_;
-	content_type_map_[SysInfoAppContentType::kDeviceCapabilities] = device_capabilities_;
+	content_type_map_[SysInfoAppContent::kSystemMetrics] = system_metrics_;
+	content_type_map_[SysInfoAppContent::kDeviceCapabilities] = device_capabilities_;
 }
 
 LRESULT SysInfoApp::HandleCreate(shared::MessageProcParameters mpp)

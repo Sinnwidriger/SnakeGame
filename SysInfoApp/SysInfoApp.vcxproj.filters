@@ -1,42 +1,42 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cc" />
-    <ClCompile Include="sys_info_app.cc">
-      <Filter>sys_info_app</Filter>
-    </ClCompile>
-    <ClCompile Include="system_information.cc">
-      <Filter>sys_info_types</Filter>
-    </ClCompile>
-    <ClCompile Include="system_metric.cc">
-      <Filter>sys_info_types</Filter>
-    </ClCompile>
-    <ClCompile Include="device_capability.cc">
-      <Filter>sys_info_types</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="sys_info_app.h">
-      <Filter>sys_info_app</Filter>
-    </ClInclude>
-    <ClInclude Include="system_information.h">
-      <Filter>sys_info_types</Filter>
-    </ClInclude>
-    <ClInclude Include="system_metric.h">
-      <Filter>sys_info_types</Filter>
-    </ClInclude>
-    <ClInclude Include="device_capability.h">
-      <Filter>sys_info_types</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="sys_info_app">
       <UniqueIdentifier>{94ab9678-7d76-4dc1-8edd-f57f92a9056d}</UniqueIdentifier>
     </Filter>
     <Filter Include="sys_info_types">
       <UniqueIdentifier>{fc3b2936-f2fc-4509-8edc-a080dae30420}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cc" />
+    <ClCompile Include="src\stdafx.cc" />
+    <ClCompile Include="src\sys_info_types\device_capability.cc">
+      <Filter>sys_info_types</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys_info_app\sys_info_app.cc">
+      <Filter>sys_info_app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys_info_types\system_information.cc">
+      <Filter>sys_info_types</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys_info_types\system_metric.cc">
+      <Filter>sys_info_types</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\sys_info_types\device_capability.h">
+      <Filter>sys_info_types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys_info_app\sys_info_app.h">
+      <Filter>sys_info_app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys_info_types\system_information.h">
+      <Filter>sys_info_types</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys_info_types\system_metric.h">
+      <Filter>sys_info_types</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

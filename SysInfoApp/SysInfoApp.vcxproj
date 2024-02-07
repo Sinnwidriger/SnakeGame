@@ -18,6 +18,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cc" />
+    <ClCompile Include="src\stdafx.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="src\sys_info_app\sys_info_app.cc" />
+    <ClCompile Include="src\sys_info_types\device_capability.cc" />
+    <ClCompile Include="src\sys_info_types\system_information.cc" />
+    <ClCompile Include="src\sys_info_types\system_metric.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\sys_info_app\sys_info_app.h" />
+    <ClInclude Include="src\sys_info_types\device_capability.h" />
+    <ClInclude Include="src\sys_info_types\system_information.h" />
+    <ClInclude Include="src\sys_info_types\system_metric.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -115,7 +133,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SharedComponents\src\;$(ProjectDir)src</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -139,7 +157,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)SharedComponents\src\;$(ProjectDir)src</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -154,26 +172,6 @@
       <Command>xcopy /y /d "$(SolutionDir)build\output\$(Configuration)\SharedComponents\SharedComponents.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="device_capability.cc" />
-    <ClCompile Include="main.cc" />
-    <ClCompile Include="stdafx.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdafx.h</PrecompiledHeaderFile>
-    </ClCompile>
-    <ClCompile Include="system_information.cc" />
-    <ClCompile Include="system_metric.cc" />
-    <ClCompile Include="sys_info_app.cc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="device_capability.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="system_information.h" />
-    <ClInclude Include="system_metric.h" />
-    <ClInclude Include="sys_info_app.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
