@@ -112,7 +112,14 @@ namespace shared
 
 		auto it = listeners_.find(msg);
 		if (it != listeners_.end())
-			return listeners_[msg](mpp);
+		{
+			LRESULT result = 0;
+			for (auto& listener : listeners_[msg])
+			{
+				result |= listener(mpp);
+			}
+			return result;
+		}
 		else
 			return DefWindowProc(wnd, msg, wparam, lparam);
 	}
@@ -122,7 +129,8 @@ namespace shared
 
 	void Window::AddMessageCallback(UINT listen_msg, MessageCallbackFunction callback)
 	{
-		listeners_[listen_msg] = std::bind(callback, this, std::placeholders::_1);
+		listeners_[listen_msg].push_back(
+			std::bind(callback, this, std::placeholders::_1));
 	}
 
 }

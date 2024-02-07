@@ -60,7 +60,7 @@ namespace shared
 		DWORD window_style_;
 
 	private:
-		std::unordered_map<UINT, std::function<LRESULT(shared::MessageProcParameters)>> listeners_;
+		std::unordered_map<UINT, std::vector<std::function<LRESULT(shared::MessageProcParameters)>>> listeners_;
 	};
 
 	template<WindowConcept T>
