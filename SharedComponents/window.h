@@ -19,7 +19,8 @@ namespace shared
 		LPARAM lparam;
 	};
 
-	using MessageCallbackFunction = LRESULT(Window::*)(MessageProcParameters);
+	using MessageCallback = std::function<LRESULT(MessageProcParameters)>;
+	using MessageMethodPtr = LRESULT(Window::*)(MessageProcParameters);
 
 	class SHAREDCOMPONENTS_API Window
 	{
@@ -46,11 +47,14 @@ namespace shared
 		Window();
 		Window(const std::wstring& window_title, DWORD window_style = WS_OVERLAPPEDWINDOW);
 
-		// Methods
+		// Static functions
 		static LRESULT CALLBACK WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam);
+		static MessageCallback MessageMethodToCallback(Window* window_instance, MessageMethodPtr method_ptr);
+
+		// Methods
 		LRESULT HandleMessage(MessageProcParameters mpp);
 		virtual void Idle();
-		void AddMessageCallback(UINT listen_msg, MessageCallbackFunction callback);
+		void AddMessageCallback(UINT listen_msg, MessageMethodPtr method_ptr);
 
 		// Fields
 		HINSTANCE instance_;
@@ -60,7 +64,7 @@ namespace shared
 		DWORD window_style_;
 
 	private:
-		std::unordered_map<UINT, std::vector<std::function<LRESULT(shared::MessageProcParameters)>>> listeners_;
+		std::unordered_map<UINT, std::vector<MessageCallback>> listeners_;
 	};
 
 	template<WindowConcept T>

@@ -3,7 +3,10 @@
 
 namespace shared
 {
-
+	MessageCallback Window::MessageMethodToCallback(Window* window_instance, MessageMethodPtr method_ptr)
+	{
+		return std::bind(method_ptr, window_instance, std::placeholders::_1);
+	}
 	bool shared::Window::Initialize()
 	{
 		WNDCLASS wc = {
@@ -127,10 +130,11 @@ namespace shared
 	void Window::Idle()
 	{ }
 
-	void Window::AddMessageCallback(UINT listen_msg, MessageCallbackFunction callback)
+	void Window::AddMessageCallback(UINT listen_msg, MessageMethodPtr method_ptr)
 	{
 		listeners_[listen_msg].push_back(
-			std::bind(callback, this, std::placeholders::_1));
+			MessageMethodToCallback(this, method_ptr)
+		);
 	}
 
 }
