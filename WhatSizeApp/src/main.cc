@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "what_size_app.h"
+#include "what_size_app/what_size_app.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PSTR szCmdLine, _In_ int iCmdShow)
 {

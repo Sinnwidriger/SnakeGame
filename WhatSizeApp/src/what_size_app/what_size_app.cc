@@ -5,9 +5,9 @@
     shared::Window(L"What Size App"),
     char_dimensions_(CharDimensions())
   {
-    AddMessageCallback(WM_CREATE, static_cast<shared::MessageCallbackFunction>(&WhatSizeApp::HandleCreate));
-    AddMessageCallback(WM_PAINT, static_cast<shared::MessageCallbackFunction>(&WhatSizeApp::HandlePaint));
-    AddMessageCallback(WM_DESTROY, static_cast<shared::MessageCallbackFunction>(&WhatSizeApp::HandleDestroy));
+    AddMessageCallback(WM_CREATE, static_cast<shared::MessageMethodPtr>(&WhatSizeApp::HandleCreate));
+    AddMessageCallback(WM_PAINT, static_cast<shared::MessageMethodPtr>(&WhatSizeApp::HandlePaint));
+    AddMessageCallback(WM_DESTROY, static_cast<shared::MessageMethodPtr>(&WhatSizeApp::HandleDestroy));
   }
 
   LRESULT WhatSizeApp::HandleCreate(shared::MessageProcParameters mpp)
