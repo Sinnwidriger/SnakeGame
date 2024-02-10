@@ -5,6 +5,7 @@ void SysInfoApp::SetContentType(SysInfoAppContent content_type)
 {
 	display_information_ = content_type_map_[content_type];
 	InvalidateRect(wnd_, nullptr, TRUE);
+	InitializeScrollBars();
 }
 
 SysInfoApp::SysInfoApp() :
@@ -15,16 +16,29 @@ SysInfoApp::SysInfoApp() :
 	AddMessageCallback(WM_SIZE, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleSize));
 	AddMessageCallback(WM_VSCROLL, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleVertScroll));
 	AddMessageCallback(WM_HSCROLL, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleHorzScroll));
+	AddMessageCallback(WM_KEYDOWN, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleKeyDown));
 	AddMessageCallback(WM_PAINT, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandlePaint));
 	AddMessageCallback(WM_DESTROY, static_cast<shared::MessageMethodPtr>(&SysInfoApp::HandleDestroy));
-
-	content_type_map_[SysInfoAppContent::kSystemMetrics] = system_metrics_;
-	content_type_map_[SysInfoAppContent::kDeviceCapabilities] = device_capabilities_;
 }
 
 LRESULT SysInfoApp::HandleCreate(shared::MessageProcParameters mpp)
 {
+	auto [wnd, msg, wparam, lparam] = mpp;
+
+	// Default content
 	display_information_ = system_metrics_;
+
+	content_type_map_[SysInfoAppContent::kSystemMetrics] = system_metrics_;
+	content_type_map_[SysInfoAppContent::kDeviceCapabilities] = device_capabilities_;
+
+	key_message_map_[VK_HOME] = { wnd, WM_VSCROLL, SB_TOP, 0 };
+	key_message_map_[VK_END] = { wnd, WM_VSCROLL, SB_BOTTOM, 0 };
+	key_message_map_[VK_PRIOR] = { wnd, WM_VSCROLL, SB_PAGEUP, 0 };
+	key_message_map_[VK_NEXT] = { wnd, WM_VSCROLL, SB_PAGEDOWN, 0 };
+	key_message_map_[VK_UP] = { wnd, WM_VSCROLL, SB_LINEUP, 0 };
+	key_message_map_[VK_DOWN] = { wnd, WM_VSCROLL, SB_LINEDOWN, 0 };
+	key_message_map_[VK_LEFT] = { wnd, WM_HSCROLL, SB_LINELEFT, 0 };
+	key_message_map_[VK_RIGHT] = { wnd, WM_HSCROLL, SB_LINERIGHT, 0 };
 
 	InitializeCharDimensions();
 	InitializeSystemMetricValues();
@@ -37,27 +51,10 @@ LRESULT SysInfoApp::HandleSize(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
-	int client_area_width = LOWORD(lparam);
-	int client_area_height = HIWORD(lparam);
+	client_area_width_ = LOWORD(lparam);
+	client_area_height_ = HIWORD(lparam);
 
-	SCROLLINFO siVert = {
-		.cbSize = sizeof(SCROLLINFO),
-		.fMask = SIF_ALL,
-		.nMin = 0,
-		.nMax = static_cast<int>(display_information_.size()),
-		.nPage = static_cast<unsigned int>(client_area_height / char_dimensions_.height)
-	};
-	SetScrollInfo(wnd_, SB_VERT, &siVert, TRUE);
-
-	SCROLLINFO siHorz = {
-		.cbSize = sizeof(SCROLLINFO),
-		.fMask = SIF_ALL,
-		.nMin = 0,
-		// Multiply "kFirstColumnCharacters" by "1.5" because characters in first column CAPITALIZED
-		.nMax = static_cast<int>(kFirstColumnCharacters * 1.5 + kSecondColumnCharacters),
-		.nPage = static_cast<unsigned int>(client_area_width / char_dimensions_.lower_case_width)
-	};
-	SetScrollInfo(wnd_, SB_HORZ, &siHorz, TRUE);
+	InitializeScrollBars();
 
 	return 0;
 }
@@ -70,6 +67,20 @@ LRESULT SysInfoApp::HandleVertScroll(shared::MessageProcParameters mpp)
 LRESULT SysInfoApp::HandleHorzScroll(shared::MessageProcParameters mpp)
 {
 	return HandleScroll(mpp, SB_HORZ);
+}
+
+LRESULT SysInfoApp::HandleKeyDown(shared::MessageProcParameters mpp)
+{
+	auto [wnd, msg, wparam, lparam] = mpp;
+
+	shared::MessageProcParameters scroll_message_parameters = key_message_map_[wparam];
+	SendMessage(
+		scroll_message_parameters.wnd,
+		scroll_message_parameters.msg,
+		scroll_message_parameters.wparam,
+		scroll_message_parameters.lparam);
+
+	return 0;
 }
 
 LRESULT SysInfoApp::HandleScroll(shared::MessageProcParameters mpp, int axis)
@@ -88,25 +99,17 @@ LRESULT SysInfoApp::HandleScroll(shared::MessageProcParameters mpp, int axis)
 	// Update position according to recieved command
 	switch (LOWORD(wparam))
 	{
-	case SB_TOP | SB_LEFT:
-		si.nPos = si.nMin;
-		break;
-	case SB_BOTTOM | SB_RIGHT:
-		si.nPos = si.nMax;
-		break;
 	case SB_LINEUP | SB_LINELEFT:
-		si.nPos -= 1;
-		if (si.nPos < si.nMin) si.nPos = si.nMin;
+		si.nPos = max(si.nPos - 1, si.nMin);
 		break;
 	case SB_LINEDOWN | SB_LINERIGHT:
-		si.nPos += 1;
-		if (si.nPos > si.nMax - static_cast<int>(si.nPage)) si.nPos = si.nMax - static_cast<int>(si.nPage);
+		si.nPos = min(si.nPos + 1, max(0, si.nMax - static_cast<int>(si.nPage)));
 		break;
 	case SB_PAGEUP | SB_PAGELEFT:
-		si.nPos -= si.nPage;
+		si.nPos = max(si.nPos - si.nPage, si.nMin);
 		break;
 	case SB_PAGEDOWN | SB_PAGERIGHT:
-		si.nPos += si.nPage;
+		si.nPos = min(si.nPos + si.nPage, si.nMax);
 		break;
 	case SB_THUMBTRACK:
 		si.nPos = si.nTrackPos;
@@ -122,6 +125,28 @@ LRESULT SysInfoApp::HandleScroll(shared::MessageProcParameters mpp, int axis)
 		ScrollWindow(wnd_, char_dimensions_.lower_case_width * (prev_position - si.nPos), 0, nullptr, nullptr);
 
 	return 0;
+}
+
+void SysInfoApp::InitializeScrollBars()
+{
+	SCROLLINFO siVert = {
+		.cbSize = sizeof(SCROLLINFO),
+		.fMask = SIF_ALL,
+		.nMin = 0,
+		.nMax = static_cast<int>(display_information_.size()),
+		.nPage = static_cast<unsigned int>(client_area_height_ / char_dimensions_.height)
+	};
+	SetScrollInfo(wnd_, SB_VERT, &siVert, TRUE);
+
+	SCROLLINFO siHorz = {
+		.cbSize = sizeof(SCROLLINFO),
+		.fMask = SIF_ALL,
+		.nMin = 0,
+		// Multiply "kFirstColumnCharacters" by "1.5" because characters in first column CAPITALIZED
+		.nMax = static_cast<int>(kFirstColumnCharacters * 1.5 + kSecondColumnCharacters),
+		.nPage = static_cast<unsigned int>(client_area_width_ / char_dimensions_.lower_case_width)
+	};
+	SetScrollInfo(wnd_, SB_HORZ, &siHorz, TRUE);
 }
 
 LRESULT SysInfoApp::HandlePaint(shared::MessageProcParameters mpp)

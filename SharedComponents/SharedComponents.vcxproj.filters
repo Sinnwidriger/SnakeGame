@@ -8,20 +8,20 @@
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\pch.cpp" />
-    <ClCompile Include="src\shared_components\gdi_obj.cc">
+    <ClCompile Include="src\shared_components\window.cc">
       <Filter>shared_components</Filter>
     </ClCompile>
-    <ClCompile Include="src\shared_components\window.cc">
+    <ClCompile Include="src\shared_components\gdi_obj.cc">
       <Filter>shared_components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\framework.h" />
     <ClInclude Include="src\pch.h" />
-    <ClInclude Include="src\shared_components\gdi_obj.h">
+    <ClInclude Include="src\shared_components\window.h">
       <Filter>shared_components</Filter>
     </ClInclude>
-    <ClInclude Include="src\shared_components\window.h">
+    <ClInclude Include="src\shared_components\gdi_obj.h">
       <Filter>shared_components</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "shared_components/window.h"
+
 struct CharDimensions
 {
   unsigned int lower_case_width;

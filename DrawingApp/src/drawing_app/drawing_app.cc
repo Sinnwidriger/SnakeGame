@@ -3,14 +3,14 @@
 
 void DrawingApp::SetContentType(DrawAppContent content_type)
 {
-	draw_content_type_ = content_type;
+	draw_content_ = content_type;
 	resize_callback_map_[content_type]();
 	InvalidateRect(wnd_, nullptr, TRUE);
 }
 
 DrawingApp::DrawingApp() :
 	shared::Window(L"Basic Drawing Application"),
-	clover_region_(CreateRectRgn(0, 0, 1, 1))
+	clover_region_(CreateRectRgn(0, 0, 1, 2))
 {
 	AddMessageCallback(WM_SIZE, static_cast<shared::MessageMethodPtr>(&DrawingApp::HandleSize));
 	AddMessageCallback(WM_PAINT, static_cast<shared::MessageMethodPtr>(&DrawingApp::HandlePaint));
@@ -47,7 +47,7 @@ LRESULT DrawingApp::HandleSize(shared::MessageProcParameters mpp)
 	client_area_width_ = LOWORD(lparam);
 	client_area_height_ = HIWORD(lparam);
 
-	resize_callback_map_[draw_content_type_]();
+	resize_callback_map_[draw_content_]();
 
 	return 0;
 }
@@ -56,13 +56,16 @@ LRESULT DrawingApp::HandleMouse(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
-	if (wparam & MK_LBUTTON || wparam & MK_RBUTTON)
+	if (draw_content_ == DrawAppContent::kDrawBezier)
 	{
-		bezier_points_[wparam] = {
-			.x = LOWORD(lparam),
-			.y = HIWORD(lparam)
-		};
-		InvalidateRect(wnd_, nullptr, TRUE);
+		if (wparam & MK_LBUTTON || wparam & MK_RBUTTON)
+		{
+			bezier_points_[wparam] = {
+				.x = LOWORD(lparam),
+				.y = HIWORD(lparam)
+			};
+			InvalidateRect(wnd_, nullptr, TRUE);
+		}
 	}
 
 	return 0;
@@ -75,7 +78,7 @@ LRESULT DrawingApp::HandlePaint(shared::MessageProcParameters mpp)
 	HDC dc = BeginPaint(wnd_, &ps);
 	SaveDC(dc);
 
-	draw_callback_map_[draw_content_type_](dc, ps);
+	draw_callback_map_[draw_content_](dc, ps);
 
 	RestoreDC(dc, -1);
 	EndPaint(wnd_, &ps);
@@ -92,7 +95,7 @@ LRESULT DrawingApp::HandleDestroy(shared::MessageProcParameters mpp)
 
 void DrawingApp::Idle()
 {
-	if (draw_content_type_ == DrawAppContent::kDrawNothing)
+	if (draw_content_ == DrawAppContent::kDrawNothing)
 	{
 		HDC dc = GetDC(wnd_);
 		RECT rect;
@@ -257,7 +260,7 @@ void DrawingApp::DrawPolygon(HDC dc, PAINTSTRUCT ps)
 
 	for (int i = 0; i < polygon_points_.size(); ++i)
 	{
-		polygon_points_[i].x += ps.rcPaint.right / 2;
+		polygon_points_[i].x += client_area_width_ / 2;
 	}
 
 	SetPolyFillMode(dc, WINDING);

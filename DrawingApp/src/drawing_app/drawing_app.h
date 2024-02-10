@@ -1,5 +1,8 @@
 #pragma once
 
+#include "shared_components/gdi_obj.h"
+#include "shared_components/window.h"
+
 enum class DrawAppContent
 {
   kDrawNothing = 0,
@@ -38,7 +41,7 @@ private:
   LRESULT HandleMouse(shared::MessageProcParameters mpp);
   LRESULT HandlePaint(shared::MessageProcParameters mpp);
   LRESULT HandleDestroy(shared::MessageProcParameters mpp);
-#pragma endregion message_handlers
+#pragma endregion
 
 #pragma region draw_resize_methods
   void InitializeNothing();
@@ -58,10 +61,10 @@ private:
 
   void InitializeCloverRegion();
   void DrawClover(HDC dc, PAINTSTRUCT ps);
-#pragma endregion draw_resize_methods
+#pragma endregion
 
 #pragma region fields
-  DrawAppContent draw_content_type_;
+  DrawAppContent draw_content_;
   std::unordered_map<DrawAppContent, ResizeCallback> resize_callback_map_;
   std::unordered_map<DrawAppContent, DrawCallback> draw_callback_map_;
 
@@ -73,5 +76,5 @@ private:
 
   int client_area_width_;
   int client_area_height_;
-#pragma endregion fields
+#pragma endregion
 };

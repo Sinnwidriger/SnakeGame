@@ -1,10 +1,11 @@
 #include "stdafx.h"
+#include "shared_components/window.h"
 #include "sys_info_app/sys_info_app.h"
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ PSTR szCmdLine, _In_ int iCmdShow)
 {
 	auto app = shared::Window::Create<SysInfoApp>();
-	app->SetContentType(SysInfoAppContent::kDeviceCapabilities);
+	app->SetContentType(SysInfoAppContent::kSystemMetrics);
 
 	if (!app)
 	{

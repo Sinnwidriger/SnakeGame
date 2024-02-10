@@ -23,12 +23,16 @@ namespace shared
 			return false;
 		}
 
+		RECT window_rect = { 0, 0, 640, 480 };
+		AdjustWindowRect(&window_rect, WS_OVERLAPPEDWINDOW | window_style_, FALSE);
+
 		wnd_ = CreateWindow(
 			window_class_name_.c_str(),
 			window_title_.c_str(),
 			WS_OVERLAPPEDWINDOW | window_style_,
 			CW_USEDEFAULT, CW_USEDEFAULT,
-			640, 480,
+			window_rect.right - window_rect.left,
+			window_rect.bottom - window_rect.top,
 			nullptr, nullptr,
 			instance_,
 			this

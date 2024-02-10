@@ -14,6 +14,3 @@
 #include <functional>
 #include <unordered_map>
 #include <cstdlib>
-
-#include "shared_components/window.h"
-#include "shared_components/gdi_obj.h"

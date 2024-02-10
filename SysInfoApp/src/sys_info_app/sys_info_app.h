@@ -1,6 +1,7 @@
 #pragma once
 #pragma once
 
+#include "shared_components/window.h"
 #include "sys_info_types/system_information.h"
 #include "sys_info_types/system_metric.h"
 #include "sys_info_types/device_capability.h"
@@ -32,10 +33,13 @@ private:
 	LRESULT HandleSize(shared::MessageProcParameters mpp);
 	LRESULT HandleVertScroll(shared::MessageProcParameters mpp);
 	LRESULT HandleHorzScroll(shared::MessageProcParameters mpp);
-	LRESULT HandleScroll(shared::MessageProcParameters mpp, int axis);
+	LRESULT HandleKeyDown(shared::MessageProcParameters mpp);
 	LRESULT HandlePaint(shared::MessageProcParameters mpp);
 	LRESULT HandleDestroy(shared::MessageProcParameters mpp);
 
+	LRESULT HandleScroll(shared::MessageProcParameters mpp, int axis);
+
+	void InitializeScrollBars();
 
 	void InitializeCharDimensions();
 	void InitializeSystemMetricValues();
@@ -45,10 +49,14 @@ private:
 	// Fields
 	CharDimensions char_dimensions_;
 
+	int client_area_width_;
+	int client_area_height_;
+
 	static constexpr int kFirstColumnCharacters = 22;
 	static constexpr int kSecondColumnCharacters = 40;
 
 	std::unordered_map<SysInfoAppContent, std::vector<std::shared_ptr<sys_info_types::SystemInformation>>> content_type_map_;
+	std::unordered_map<UINT, shared::MessageProcParameters> key_message_map_;
 
 	std::vector<std::shared_ptr<sys_info_types::SystemInformation>> display_information_;
 
