@@ -31,14 +31,14 @@ LRESULT SysInfoApp::HandleCreate(shared::MessageProcParameters mpp)
 	content_type_map_[SysInfoAppContent::kSystemMetrics] = system_metrics_;
 	content_type_map_[SysInfoAppContent::kDeviceCapabilities] = device_capabilities_;
 
-	key_message_map_[VK_HOME] = { wnd, WM_VSCROLL, SB_TOP, 0 };
-	key_message_map_[VK_END] = { wnd, WM_VSCROLL, SB_BOTTOM, 0 };
-	key_message_map_[VK_PRIOR] = { wnd, WM_VSCROLL, SB_PAGEUP, 0 };
-	key_message_map_[VK_NEXT] = { wnd, WM_VSCROLL, SB_PAGEDOWN, 0 };
-	key_message_map_[VK_UP] = { wnd, WM_VSCROLL, SB_LINEUP, 0 };
-	key_message_map_[VK_DOWN] = { wnd, WM_VSCROLL, SB_LINEDOWN, 0 };
-	key_message_map_[VK_LEFT] = { wnd, WM_HSCROLL, SB_LINELEFT, 0 };
-	key_message_map_[VK_RIGHT] = { wnd, WM_HSCROLL, SB_LINERIGHT, 0 };
+	key_scroll_message_map_[VK_HOME] = { wnd, WM_VSCROLL, SB_TOP, 0 };
+	key_scroll_message_map_[VK_END] = { wnd, WM_VSCROLL, SB_BOTTOM, 0 };
+	key_scroll_message_map_[VK_PRIOR] = { wnd, WM_VSCROLL, SB_PAGEUP, 0 };
+	key_scroll_message_map_[VK_NEXT] = { wnd, WM_VSCROLL, SB_PAGEDOWN, 0 };
+	key_scroll_message_map_[VK_UP] = { wnd, WM_VSCROLL, SB_LINEUP, 0 };
+	key_scroll_message_map_[VK_DOWN] = { wnd, WM_VSCROLL, SB_LINEDOWN, 0 };
+	key_scroll_message_map_[VK_LEFT] = { wnd, WM_HSCROLL, SB_LINELEFT, 0 };
+	key_scroll_message_map_[VK_RIGHT] = { wnd, WM_HSCROLL, SB_LINERIGHT, 0 };
 
 	InitializeCharDimensions();
 	InitializeSystemMetricValues();
@@ -50,9 +50,6 @@ LRESULT SysInfoApp::HandleCreate(shared::MessageProcParameters mpp)
 LRESULT SysInfoApp::HandleSize(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
-
-	client_area_width_ = LOWORD(lparam);
-	client_area_height_ = HIWORD(lparam);
 
 	InitializeScrollBars();
 
@@ -73,7 +70,7 @@ LRESULT SysInfoApp::HandleKeyDown(shared::MessageProcParameters mpp)
 {
 	auto [wnd, msg, wparam, lparam] = mpp;
 
-	shared::MessageProcParameters scroll_message_parameters = key_message_map_[wparam];
+	shared::MessageProcParameters scroll_message_parameters = key_scroll_message_map_[wparam];
 	SendMessage(
 		scroll_message_parameters.wnd,
 		scroll_message_parameters.msg,
@@ -134,7 +131,7 @@ void SysInfoApp::InitializeScrollBars()
 		.fMask = SIF_ALL,
 		.nMin = 0,
 		.nMax = static_cast<int>(display_information_.size()),
-		.nPage = static_cast<unsigned int>(client_area_height_ / char_dimensions_.height)
+		.nPage = static_cast<unsigned int>(client_height_ / char_dimensions_.height)
 	};
 	SetScrollInfo(wnd_, SB_VERT, &siVert, TRUE);
 
@@ -144,7 +141,7 @@ void SysInfoApp::InitializeScrollBars()
 		.nMin = 0,
 		// Multiply "kFirstColumnCharacters" by "1.5" because characters in first column CAPITALIZED
 		.nMax = static_cast<int>(kFirstColumnCharacters * 1.5 + kSecondColumnCharacters),
-		.nPage = static_cast<unsigned int>(client_area_width_ / char_dimensions_.lower_case_width)
+		.nPage = static_cast<unsigned int>(client_width_ / char_dimensions_.lower_case_width)
 	};
 	SetScrollInfo(wnd_, SB_HORZ, &siHorz, TRUE);
 }

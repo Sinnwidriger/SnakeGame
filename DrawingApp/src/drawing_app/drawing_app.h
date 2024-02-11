@@ -25,16 +25,18 @@ class DrawingApp : public shared::Window
 {
   friend class Window;
 
+private:
+  DrawingApp();
+
+private:
+  static DrawCallback DrawMethodToCallback(DrawingApp* app_instance, DrawMethodPtr method_ptr);
+  static ResizeCallback ResizeMethodToCallback(DrawingApp* app_instance, ResizeMethodPtr method_ptr);
+
 public:
   void SetContentType(DrawAppContent content_type);
 
 private:
-  DrawingApp();
-
   virtual void Idle() override;
-
-  static DrawCallback DrawMethodToCallback(DrawingApp* app_instance, DrawMethodPtr method_ptr);
-  static ResizeCallback ResizeMethodToCallback(DrawingApp* app_instance, ResizeMethodPtr method_ptr);
 
 #pragma region message_handlers
   LRESULT HandleSize(shared::MessageProcParameters mpp);
@@ -63,6 +65,7 @@ private:
   void DrawClover(HDC dc, PAINTSTRUCT ps);
 #pragma endregion
 
+private:
 #pragma region fields
   DrawAppContent draw_content_;
   std::unordered_map<DrawAppContent, ResizeCallback> resize_callback_map_;
@@ -73,8 +76,5 @@ private:
   std::vector<POINT> bezier_points_;
   std::vector<POINT> polygon_points_;
   shared::GDIObj<HRGN> clover_region_;
-
-  int client_area_width_;
-  int client_area_height_;
 #pragma endregion
 };

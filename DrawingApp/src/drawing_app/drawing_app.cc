@@ -42,13 +42,7 @@ DrawingApp::DrawingApp() :
 #pragma region message_handlers
 LRESULT DrawingApp::HandleSize(shared::MessageProcParameters mpp)
 {
-	auto [wnd, msg, wparam, lparam] = mpp;
-
-	client_area_width_ = LOWORD(lparam);
-	client_area_height_ = HIWORD(lparam);
-
 	resize_callback_map_[draw_content_]();
-
 	return 0;
 }
 
@@ -100,12 +94,12 @@ void DrawingApp::Idle()
 		HDC dc = GetDC(wnd_);
 		RECT rect;
 
-		if (client_area_width_ == 0 || client_area_height_ == 0)
+		if (client_width_ == 0 || client_height_ == 0)
 			return;
 
 		shared::GDIObj<HBRUSH> brush = CreateSolidBrush(RGB(rand() % 256, rand() % 256, rand() % 256));
 
-		SetRect(&rect, rand() % client_area_width_, rand() % client_area_height_, rand() % client_area_width_, rand() % client_area_height_);
+		SetRect(&rect, rand() % client_width_, rand() % client_height_, rand() % client_width_, rand() % client_height_);
 		FillRect(dc, &rect, brush);
 
 		ReleaseDC(wnd_, dc);
@@ -137,8 +131,8 @@ void DrawingApp::InitializeSinWavePoints()
 	for (int i = 0; i < 1000; ++i)
 	{
 		POINT pt = {
-			.x = i * client_area_width_ / 1000,
-			.y = static_cast<int>(client_area_height_ / 2 * (1 - std::sin(2 * std::numbers::pi * i / 1000)))
+			.x = i * client_width_ / 1000,
+			.y = static_cast<int>(client_height_ / 2 * (1 - std::sin(2 * std::numbers::pi * i / 1000)))
 		};
 
 		sin_wave_points_.push_back(pt);
@@ -158,17 +152,17 @@ void DrawingApp::InitializeLinesPoints()
 {
 	lines_points_.clear();
 
-	lines_points_.push_back({ client_area_width_ / 8, client_area_height_ / 8 });
-	lines_points_.push_back({ client_area_width_ * 7 / 8, client_area_height_ * 7 / 8 });
+	lines_points_.push_back({ client_width_ / 8, client_height_ / 8 });
+	lines_points_.push_back({ client_width_ * 7 / 8, client_height_ * 7 / 8 });
 
 	lines_points_.push_back({ 0, 0 });
-	lines_points_.push_back({ client_area_width_, client_area_height_});
+	lines_points_.push_back({ client_width_, client_height_ });
 
-	lines_points_.push_back({ 0, client_area_height_ });
-	lines_points_.push_back({ client_area_width_, 0 });
+	lines_points_.push_back({ 0, client_height_ });
+	lines_points_.push_back({ client_width_, 0 });
 
-	lines_points_.push_back({ client_area_width_ / 4, client_area_height_ / 4 });
-	lines_points_.push_back({ client_area_width_ * 3 / 4, client_area_height_ * 3 / 4 });
+	lines_points_.push_back({ client_width_ / 4, client_height_ / 4 });
+	lines_points_.push_back({ client_width_ * 3 / 4, client_height_ * 3 / 4 });
 }
 
 void DrawingApp::DrawLines(HDC dc, PAINTSTRUCT ps)
@@ -206,8 +200,8 @@ void DrawingApp::DrawLines(HDC dc, PAINTSTRUCT ps)
 		lines_points_[6].y,
 		lines_points_[7].x,
 		lines_points_[7].y,
-		client_area_width_ / 4,
-		client_area_height_ / 4);
+		client_width_ / 4,
+		client_height_ / 4);
 }
 #pragma endregion lines
 
@@ -216,10 +210,10 @@ void DrawingApp::InitializeBezierPoints()
 {
 	bezier_points_.clear();
 
-	bezier_points_.push_back({ client_area_width_ / 4, client_area_height_ / 2 });
-	bezier_points_.push_back({ client_area_width_ / 2, client_area_height_ / 4 });
-	bezier_points_.push_back({ client_area_width_ / 2, client_area_height_ * 3 / 4 });
-	bezier_points_.push_back({ client_area_width_ * 3 / 4, client_area_height_ / 2 });
+	bezier_points_.push_back({ client_width_ / 4, client_height_ / 2 });
+	bezier_points_.push_back({ client_width_ / 2, client_height_ / 4 });
+	bezier_points_.push_back({ client_width_ / 2, client_height_ * 3 / 4 });
+	bezier_points_.push_back({ client_width_ * 3 / 4, client_height_ / 2 });
 }
 
 void DrawingApp::DrawBezier(HDC dc, PAINTSTRUCT ps)
@@ -240,16 +234,16 @@ void DrawingApp::InitializePolygonPoints()
 {
 	polygon_points_.clear();
 
-	polygon_points_.push_back({ 10 * client_area_width_ / 200, 70 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 50 * client_area_width_ / 200, 70 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 50 * client_area_width_ / 200, 10 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 90 * client_area_width_ / 200, 10 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 90 * client_area_width_ / 200, 50 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 30 * client_area_width_ / 200, 50 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 30 * client_area_width_ / 200, 90 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 70 * client_area_width_ / 200, 90 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 70 * client_area_width_ / 200, 30 * client_area_height_ / 100 });
-	polygon_points_.push_back({ 10 * client_area_width_ / 200, 30 * client_area_height_ / 100 });
+	polygon_points_.push_back({ 10 * client_width_ / 200, 70 * client_height_ / 100 });
+	polygon_points_.push_back({ 50 * client_width_ / 200, 70 * client_height_ / 100 });
+	polygon_points_.push_back({ 50 * client_width_ / 200, 10 * client_height_ / 100 });
+	polygon_points_.push_back({ 90 * client_width_ / 200, 10 * client_height_ / 100 });
+	polygon_points_.push_back({ 90 * client_width_ / 200, 50 * client_height_ / 100 });
+	polygon_points_.push_back({ 30 * client_width_ / 200, 50 * client_height_ / 100 });
+	polygon_points_.push_back({ 30 * client_width_ / 200, 90 * client_height_ / 100 });
+	polygon_points_.push_back({ 70 * client_width_ / 200, 90 * client_height_ / 100 });
+	polygon_points_.push_back({ 70 * client_width_ / 200, 30 * client_height_ / 100 });
+	polygon_points_.push_back({ 10 * client_width_ / 200, 30 * client_height_ / 100 });
 }
 
 void DrawingApp::DrawPolygon(HDC dc, PAINTSTRUCT ps)
@@ -260,7 +254,7 @@ void DrawingApp::DrawPolygon(HDC dc, PAINTSTRUCT ps)
 
 	for (int i = 0; i < polygon_points_.size(); ++i)
 	{
-		polygon_points_[i].x += client_area_width_ / 2;
+		polygon_points_[i].x += client_width_ / 2;
 	}
 
 	SetPolyFillMode(dc, WINDING);
@@ -271,10 +265,10 @@ void DrawingApp::DrawPolygon(HDC dc, PAINTSTRUCT ps)
 #pragma region clover
 void DrawingApp::InitializeCloverRegion()
 {
-	shared::GDIObj<HRGN> left_leaf = CreateEllipticRgn(0, client_area_height_ / 3, client_area_width_ / 2, client_area_height_ * 2 / 3);
-	shared::GDIObj<HRGN> right_leaf = CreateEllipticRgn(client_area_width_ / 2, client_area_height_ / 3, client_area_width_, client_area_height_ * 2 / 3);
-	shared::GDIObj<HRGN> top_leaf = CreateEllipticRgn(client_area_width_ / 3, 0, client_area_width_ * 2 / 3, client_area_height_ / 2);
-	shared::GDIObj<HRGN> bottom_leaf = CreateEllipticRgn(client_area_width_ / 3, client_area_height_ / 2, client_area_width_ * 2 / 3, client_area_height_);
+	shared::GDIObj<HRGN> left_leaf = CreateEllipticRgn(0, client_height_ / 3, client_width_ / 2, client_height_ * 2 / 3);
+	shared::GDIObj<HRGN> right_leaf = CreateEllipticRgn(client_width_ / 2, client_height_ / 3, client_width_, client_height_ * 2 / 3);
+	shared::GDIObj<HRGN> top_leaf = CreateEllipticRgn(client_width_ / 3, 0, client_width_ * 2 / 3, client_height_ / 2);
+	shared::GDIObj<HRGN> bottom_leaf = CreateEllipticRgn(client_width_ / 3, client_height_ / 2, client_width_ * 2 / 3, client_height_);
 
 	shared::GDIObj<HRGN> horz_leaves = CreateRectRgn(0, 0, 1, 1);
 	shared::GDIObj<HRGN> vert_leaves = CreateRectRgn(0, 0, 1, 1);
@@ -287,9 +281,9 @@ void DrawingApp::InitializeCloverRegion()
 void DrawingApp::DrawClover(HDC dc, PAINTSTRUCT ps)
 {
 	SelectClipRgn(dc, clover_region_);
-	SetWindowOrgEx(dc, -client_area_width_ / 2, -client_area_height_ / 2, nullptr);
+	SetWindowOrgEx(dc, -client_width_ / 2, -client_height_ / 2, nullptr);
 
-	double radius = max(client_area_width_ / 2, client_area_height_ / 2);
+	double radius = max(client_width_ / 2, client_height_ / 2);
 
 	for (double angle = 0.0; angle < std::numbers::pi * 2; angle += std::numbers::pi / 180)
 	{

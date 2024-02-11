@@ -49,14 +49,11 @@ private:
 	// Fields
 	CharDimensions char_dimensions_;
 
-	int client_area_width_;
-	int client_area_height_;
-
 	static constexpr int kFirstColumnCharacters = 22;
 	static constexpr int kSecondColumnCharacters = 40;
 
 	std::unordered_map<SysInfoAppContent, std::vector<std::shared_ptr<sys_info_types::SystemInformation>>> content_type_map_;
-	std::unordered_map<UINT, shared::MessageProcParameters> key_message_map_;
+	std::unordered_map<UINT, shared::MessageProcParameters> key_scroll_message_map_;
 
 	std::vector<std::shared_ptr<sys_info_types::SystemInformation>> display_information_;
 

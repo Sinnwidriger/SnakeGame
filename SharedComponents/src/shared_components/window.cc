@@ -3,10 +3,58 @@
 
 namespace shared
 {
+	Window::Window() :
+		Window(L"Default Window")
+	{ }
+
+	Window::Window(const std::wstring& window_title, DWORD window_style) :
+		instance_(GetModuleHandle(nullptr)),
+		wnd_(nullptr),
+		window_title_(window_title),
+		window_class_name_(window_title + L" Class"),
+		window_style_(window_style),
+		client_width_(0),
+		client_height_(0)
+	{
+		AddMessageCallback(WM_SIZE, static_cast<MessageMethodPtr>(&Window::HandleSize));
+	}
+
+	LRESULT Window::WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
+	{
+		Window* app_pointer = nullptr;
+
+		if (msg == WM_NCCREATE)
+		{
+			CREATESTRUCT* create_struct_pointer = reinterpret_cast<CREATESTRUCT*>(lparam);
+			app_pointer = static_cast<Window*>(create_struct_pointer->lpCreateParams);
+			SetWindowLongPtr(wnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(app_pointer));
+		}
+		else
+		{
+			app_pointer = reinterpret_cast<Window*>(GetWindowLongPtr(wnd, GWLP_USERDATA));
+		}
+
+		if (app_pointer)
+		{
+			MessageProcParameters mpp = {
+				.wnd = wnd,
+				.msg = msg,
+				.wparam = wparam,
+				.lparam = lparam
+			};
+			return app_pointer->HandleMessage(mpp);
+		}
+		else
+		{
+			return DefWindowProc(wnd, msg, wparam, lparam);
+		}
+	}
+
 	MessageCallback Window::MessageMethodToCallback(Window* window_instance, MessageMethodPtr method_ptr)
 	{
 		return std::bind(method_ptr, window_instance, std::placeholders::_1);
 	}
+
 	bool shared::Window::Initialize()
 	{
 		WNDCLASS wc = {
@@ -70,47 +118,11 @@ namespace shared
 		return static_cast<int>(msg.wParam);
 	}
 
-	Window::Window() :
-		Window(L"Default Window")
-	{ }
-
-	Window::Window(const std::wstring& window_title, DWORD window_style) :
-		instance_(GetModuleHandle(nullptr)),
-		wnd_(nullptr),
-		window_title_(window_title),
-		window_class_name_(window_title + L" Class"),
-		window_style_(window_style)
-	{ }
-
-	LRESULT Window::WindowProc(HWND wnd, UINT msg, WPARAM wparam, LPARAM lparam)
+	void Window::AddMessageCallback(UINT listen_msg, MessageMethodPtr method_ptr)
 	{
-		Window* app_pointer = nullptr;
-
-		if (msg == WM_NCCREATE)
-		{
-			CREATESTRUCT* create_struct_pointer = reinterpret_cast<CREATESTRUCT*>(lparam);
-			app_pointer = static_cast<Window*>(create_struct_pointer->lpCreateParams);
-			SetWindowLongPtr(wnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(app_pointer));
-		}
-		else
-		{
-			app_pointer = reinterpret_cast<Window*>(GetWindowLongPtr(wnd, GWLP_USERDATA));
-		}
-
-		if (app_pointer)
-		{
-			MessageProcParameters mpp = {
-				.wnd = wnd,
-				.msg = msg,
-				.wparam = wparam,
-				.lparam = lparam
-			};
-			return app_pointer->HandleMessage(mpp);
-		}
-		else
-		{
-			return DefWindowProc(wnd, msg, wparam, lparam);
-		}
+		listeners_[listen_msg].push_back(
+			MessageMethodToCallback(this, method_ptr)
+		);
 	}
 
 	LRESULT Window::HandleMessage(MessageProcParameters mpp)
@@ -131,15 +143,18 @@ namespace shared
 			return DefWindowProc(wnd, msg, wparam, lparam);
 	}
 
+	LRESULT Window::HandleSize(MessageProcParameters mpp)
+	{
+		auto [wnd, msg, wparam, lparam] = mpp;
+
+		client_width_ = LOWORD(lparam);
+		client_height_ = HIWORD(lparam);
+
+		return 0;
+	}
+
 	void Window::Idle()
 	{ }
-
-	void Window::AddMessageCallback(UINT listen_msg, MessageMethodPtr method_ptr)
-	{
-		listeners_[listen_msg].push_back(
-			MessageMethodToCallback(this, method_ptr)
-		);
-	}
 
 }
 
